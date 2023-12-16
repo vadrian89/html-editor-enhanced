@@ -1,4 +1,4 @@
-library html_editor_controller;
+library controller;
 
 export 'controller/html_editor_controller_unsupported.dart'
     if (dart.library.html) 'controller/html_editor_controller_web.dart'
