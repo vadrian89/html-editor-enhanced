@@ -2761,3 +2761,9 @@ enum ToolbarType { nativeGrid, nativeScrollable, nativeExpandable }
 ///
 /// Note: This is ignored when [ToolbarType.summernote] is set.
 enum ToolbarPosition { aboveEditor, belowEditor, custom }
+
+/// Returns the type of dropdown changed in the `onDropdownChanged` function
+enum DropdownType { style, fontName, fontSize, fontSizeUnit, listStyles, lineHeight, caseConverter }
+
+/// Sets the direction the dropdown menu opens
+enum DropdownMenuDirection { down, up }
