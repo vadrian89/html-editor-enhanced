@@ -8,36 +8,10 @@ import 'html_editor_controller_unsupported.dart' as unsupported;
 /// Controller for mobile
 class HtmlEditorController extends unsupported.HtmlEditorController {
   HtmlEditorController({
-    this.processInputHtml = true,
-    this.processNewLineAsBr = false,
-    this.processOutputHtml = true,
+    super.processInputHtml = true,
+    super.processNewLineAsBr = false,
+    super.processOutputHtml = true,
   });
-
-  /// Toolbar widget state to call various methods. For internal use only.
-  @override
-  HtmlEditorToolbarState? toolbar;
-
-  /// Determines whether text processing should happen on input HTML, e.g.
-  /// whether a new line should be converted to a <br>.
-  ///
-  /// The default value is false.
-  @override
-  final bool processInputHtml;
-
-  /// Determines whether newlines (\n) should be written as <br>. This is not
-  /// recommended for HTML documents.
-  ///
-  /// The default value is false.
-  @override
-  final bool processNewLineAsBr;
-
-  /// Determines whether text processing should happen on output HTML, e.g.
-  /// whether <p><br></p> is returned as "". For reference, Summernote uses
-  /// that HTML as the default HTML (when no text is in the editor).
-  ///
-  /// The default value is true.
-  @override
-  final bool processOutputHtml;
 
   /// Manages the [InAppWebViewController] for the [HtmlEditorController]
   InAppWebViewController? _editorController;

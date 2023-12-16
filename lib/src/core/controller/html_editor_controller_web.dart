@@ -11,36 +11,10 @@ import 'html_editor_controller_unsupported.dart' as unsupported;
 /// Controller for web
 class HtmlEditorController extends unsupported.HtmlEditorController {
   HtmlEditorController({
-    this.processInputHtml = true,
-    this.processNewLineAsBr = false,
-    this.processOutputHtml = true,
+    super.processInputHtml = true,
+    super.processNewLineAsBr = false,
+    super.processOutputHtml = true,
   });
-
-  /// Toolbar widget state to call various methods. For internal use only.
-  @override
-  HtmlEditorToolbarState? toolbar;
-
-  /// Determines whether text processing should happen on input HTML, e.g.
-  /// whether a new line should be converted to a <br>.
-  ///
-  /// The default value is true.
-  @override
-  final bool processInputHtml;
-
-  /// Determines whether newlines (\n) should be written as <br>. This is not
-  /// recommended for HTML documents.
-  ///
-  /// The default value is false.
-  @override
-  final bool processNewLineAsBr;
-
-  /// Determines whether text processing should happen on output HTML, e.g.
-  /// whether <p><br></p> is returned as "". For reference, Summernote uses
-  /// that HTML as the default HTML (when no text is in the editor).
-  ///
-  /// The default value is true.
-  @override
-  final bool processOutputHtml;
 
   /// Manages the view ID for the [HtmlEditorController] on web
   String? _viewId;
@@ -59,8 +33,9 @@ class HtmlEditorController extends unsupported.HtmlEditorController {
         .firstWhere((element) => json.decode(element.data)['type'] == 'toDart: getText');
     String text = json.decode(e.data)['text'];
     if (processOutputHtml &&
-        (text.isEmpty || text == '<p></p>' || text == '<p><br></p>' || text == '<p><br/></p>'))
+        (text.isEmpty || text == '<p></p>' || text == '<p><br></p>' || text == '<p><br/></p>')) {
       text = '';
+    }
     return text;
   }
 
@@ -299,7 +274,7 @@ class HtmlEditorController extends unsupported.HtmlEditorController {
   void _evaluateJavascriptWeb({required Map<String, Object?> data}) async {
     if (kIsWeb) {
       data['view'] = _viewId;
-      final jsonEncoder = JsonEncoder();
+      const jsonEncoder = JsonEncoder();
       var json = jsonEncoder.convert(data);
       html.window.postMessage(json, '*');
     } else {

@@ -441,7 +441,7 @@ class _HtmlEditorState extends State<HtmlEditor> {
                   widget.htmlEditorOptions.darkMode != false) {
                 //todo fix for iOS (https://github.com/pichillilorenzo/flutter_inappwebview/issues/695)
                 var darkCSS =
-                    '<link href=\"${(widget.htmlEditorOptions.filePath != null ? "file:///android_asset/flutter_assets/packages/html_editor_enhanced/assets/" : "") + "summernote-lite-dark.css"}\" rel=\"stylesheet\">';
+                    '<link href="${"${widget.htmlEditorOptions.filePath != null ? "file:///android_asset/flutter_assets/packages/html_editor_enhanced/assets/" : ""}summernote-lite-dark.css"}" rel="stylesheet">';
                 await controller.evaluateJavascript(source: "\$('head').append('$darkCSS');");
               }
               //set the text once the editor is loaded
