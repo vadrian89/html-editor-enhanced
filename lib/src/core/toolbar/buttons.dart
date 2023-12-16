@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
 /// Abstract class that all the toolbar classes extend
-abstract class Toolbar {
-  const Toolbar();
+abstract class ToolbarButton {
+  const ToolbarButton();
 }
 
 /// Style group
-class StyleButtons extends Toolbar {
+class StyleButtons extends ToolbarButton {
   final bool style;
 
   const StyleButtons({
@@ -15,7 +15,7 @@ class StyleButtons extends Toolbar {
 }
 
 /// Font setting group
-class FontSettingButtons extends Toolbar {
+class FontSettingButtons extends ToolbarButton {
   final bool fontName;
   final bool fontSize;
   final bool fontSizeUnit;
@@ -28,7 +28,7 @@ class FontSettingButtons extends Toolbar {
 }
 
 /// Font group
-class FontButtons extends Toolbar {
+class FontButtons extends ToolbarButton {
   final bool bold;
   final bool italic;
   final bool underline;
@@ -49,24 +49,24 @@ class FontButtons extends Toolbar {
 
   List<Icon> getIcons1() {
     var icons = <Icon>[];
-    if (bold) icons.add(Icon(Icons.format_bold));
-    if (italic) icons.add(Icon(Icons.format_italic));
-    if (underline) icons.add(Icon(Icons.format_underline));
-    if (clearAll) icons.add(Icon(Icons.format_clear));
+    if (bold) icons.add(const Icon(Icons.format_bold));
+    if (italic) icons.add(const Icon(Icons.format_italic));
+    if (underline) icons.add(const Icon(Icons.format_underline));
+    if (clearAll) icons.add(const Icon(Icons.format_clear));
     return icons;
   }
 
   List<Icon> getIcons2() {
     var icons = <Icon>[];
-    if (strikethrough) icons.add(Icon(Icons.format_strikethrough));
-    if (superscript) icons.add(Icon(Icons.superscript));
-    if (subscript) icons.add(Icon(Icons.subscript));
+    if (strikethrough) icons.add(const Icon(Icons.format_strikethrough));
+    if (superscript) icons.add(const Icon(Icons.superscript));
+    if (subscript) icons.add(const Icon(Icons.subscript));
     return icons;
   }
 }
 
 /// Color bar group
-class ColorButtons extends Toolbar {
+class ColorButtons extends ToolbarButton {
   final bool foregroundColor;
   final bool highlightColor;
 
@@ -77,14 +77,14 @@ class ColorButtons extends Toolbar {
 
   List<Icon> getIcons() {
     var icons = <Icon>[];
-    if (foregroundColor) icons.add(Icon(Icons.format_color_text));
-    if (highlightColor) icons.add(Icon(Icons.format_color_fill));
+    if (foregroundColor) icons.add(const Icon(Icons.format_color_text));
+    if (highlightColor) icons.add(const Icon(Icons.format_color_fill));
     return icons;
   }
 }
 
 /// List group
-class ListButtons extends Toolbar {
+class ListButtons extends ToolbarButton {
   final bool ul;
   final bool ol;
   final bool listStyles;
@@ -97,14 +97,14 @@ class ListButtons extends Toolbar {
 
   List<Icon> getIcons() {
     var icons = <Icon>[];
-    if (ul) icons.add(Icon(Icons.format_list_bulleted));
-    if (ol) icons.add(Icon(Icons.format_list_numbered));
+    if (ul) icons.add(const Icon(Icons.format_list_bulleted));
+    if (ol) icons.add(const Icon(Icons.format_list_numbered));
     return icons;
   }
 }
 
 /// Paragraph group
-class ParagraphButtons extends Toolbar {
+class ParagraphButtons extends ToolbarButton {
   final bool alignLeft;
   final bool alignCenter;
   final bool alignRight;
@@ -129,23 +129,23 @@ class ParagraphButtons extends Toolbar {
 
   List<Icon> getIcons1() {
     var icons = <Icon>[];
-    if (alignLeft) icons.add(Icon(Icons.format_align_left));
-    if (alignCenter) icons.add(Icon(Icons.format_align_center));
-    if (alignRight) icons.add(Icon(Icons.format_align_right));
-    if (alignJustify) icons.add(Icon(Icons.format_align_justify));
+    if (alignLeft) icons.add(const Icon(Icons.format_align_left));
+    if (alignCenter) icons.add(const Icon(Icons.format_align_center));
+    if (alignRight) icons.add(const Icon(Icons.format_align_right));
+    if (alignJustify) icons.add(const Icon(Icons.format_align_justify));
     return icons;
   }
 
   List<Icon> getIcons2() {
     var icons = <Icon>[];
-    if (increaseIndent) icons.add(Icon(Icons.format_indent_increase));
-    if (decreaseIndent) icons.add(Icon(Icons.format_indent_decrease));
+    if (increaseIndent) icons.add(const Icon(Icons.format_indent_increase));
+    if (decreaseIndent) icons.add(const Icon(Icons.format_indent_decrease));
     return icons;
   }
 }
 
 /// Insert group
-class InsertButtons extends Toolbar {
+class InsertButtons extends ToolbarButton {
   final bool link;
   final bool picture;
   final bool audio;
@@ -166,19 +166,19 @@ class InsertButtons extends Toolbar {
 
   List<Icon> getIcons() {
     var icons = <Icon>[];
-    if (link) icons.add(Icon(Icons.link));
-    if (picture) icons.add(Icon(Icons.image_outlined));
-    if (audio) icons.add(Icon(Icons.audiotrack_outlined));
-    if (video) icons.add(Icon(Icons.videocam_outlined));
-    if (otherFile) icons.add(Icon(Icons.attach_file));
-    if (table) icons.add(Icon(Icons.table_chart_outlined));
-    if (hr) icons.add(Icon(Icons.horizontal_rule));
+    if (link) icons.add(const Icon(Icons.link));
+    if (picture) icons.add(const Icon(Icons.image_outlined));
+    if (audio) icons.add(const Icon(Icons.audiotrack_outlined));
+    if (video) icons.add(const Icon(Icons.videocam_outlined));
+    if (otherFile) icons.add(const Icon(Icons.attach_file));
+    if (table) icons.add(const Icon(Icons.table_chart_outlined));
+    if (hr) icons.add(const Icon(Icons.horizontal_rule));
     return icons;
   }
 }
 
 /// Miscellaneous group
-class OtherButtons extends Toolbar {
+class OtherButtons extends ToolbarButton {
   final bool fullscreen;
   final bool codeview;
   final bool undo;
@@ -199,18 +199,56 @@ class OtherButtons extends Toolbar {
 
   List<Icon> getIcons1() {
     var icons = <Icon>[];
-    if (fullscreen) icons.add(Icon(Icons.fullscreen));
-    if (codeview) icons.add(Icon(Icons.code));
-    if (undo) icons.add(Icon(Icons.undo));
-    if (redo) icons.add(Icon(Icons.redo));
-    if (help) icons.add(Icon(Icons.help_outline));
+    if (fullscreen) icons.add(const Icon(Icons.fullscreen));
+    if (codeview) icons.add(const Icon(Icons.code));
+    if (undo) icons.add(const Icon(Icons.undo));
+    if (redo) icons.add(const Icon(Icons.redo));
+    if (help) icons.add(const Icon(Icons.help_outline));
     return icons;
   }
 
   List<Icon> getIcons2() {
     var icons = <Icon>[];
-    if (copy) icons.add(Icon(Icons.copy));
-    if (paste) icons.add(Icon(Icons.paste));
+    if (copy) icons.add(const Icon(Icons.copy));
+    if (paste) icons.add(const Icon(Icons.paste));
     return icons;
   }
+}
+
+/// Returns the type of button pressed in the `onButtonPressed` function
+enum ButtonType {
+  style,
+  bold,
+  italic,
+  underline,
+  clearFormatting,
+  strikethrough,
+  superscript,
+  subscript,
+  foregroundColor,
+  highlightColor,
+  ul,
+  ol,
+  alignLeft,
+  alignCenter,
+  alignRight,
+  alignJustify,
+  increaseIndent,
+  decreaseIndent,
+  ltr,
+  rtl,
+  link,
+  picture,
+  audio,
+  video,
+  otherFile,
+  table,
+  hr,
+  fullscreen,
+  codeview,
+  undo,
+  redo,
+  help,
+  copy,
+  paste
 }
