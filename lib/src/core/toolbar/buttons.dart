@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-@Deprecated("Use ToolbarButton instead. This will be removed in the next version")
+@Deprecated("Use ToolbarButton instead. This interface will be removed in the next version.")
 abstract class Toolbar {}
 
 /// Abstract class that all the toolbar classes extend

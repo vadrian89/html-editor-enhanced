@@ -67,34 +67,36 @@ class _HtmlEditorExampleState extends State<HtmlEditorExample> {
             children: <Widget>[
               HtmlEditor(
                 controller: controller,
+                toolbar: HtmlEditorToolbar(
+                  controller: controller,
+                  type: ToolbarType.nativeExpandable,
+                  options: HtmlToolbarOptions(
+                    onButtonPressed: (ButtonType type, bool? status, Function? updateStatus) {
+                      print(
+                          "button '${describeEnum(type)}' pressed, the current selected status is $status");
+                      return true;
+                    },
+                    onDropdownChanged: (DropdownType type, dynamic changed,
+                        Function(dynamic)? updateSelectedItem) {
+                      print("dropdown '${describeEnum(type)}' changed to $changed");
+                      return true;
+                    },
+                    mediaLinkInsertInterceptor: (String url, InsertFileType type) {
+                      print(url);
+                      return true;
+                    },
+                    mediaUploadInterceptor: (PlatformFile file, InsertFileType type) async {
+                      print(file.name); //filename
+                      print(file.size); //size in bytes
+                      print(file.extension); //file extension (eg jpeg or mp4)
+                      return true;
+                    },
+                  ),
+                ),
                 htmlEditorOptions: HtmlEditorOptions(
                   hint: 'Your text here...',
                   shouldEnsureVisible: true,
                   //initialText: "<p>text content initial, if any</p>",
-                ),
-                htmlToolbarOptions: HtmlToolbarOptions(
-                  toolbarPosition: ToolbarPosition.aboveEditor, //by default
-                  toolbarType: ToolbarType.nativeScrollable, //by default
-                  onButtonPressed: (ButtonType type, bool? status, Function? updateStatus) {
-                    print(
-                        "button '${describeEnum(type)}' pressed, the current selected status is $status");
-                    return true;
-                  },
-                  onDropdownChanged:
-                      (DropdownType type, dynamic changed, Function(dynamic)? updateSelectedItem) {
-                    print("dropdown '${describeEnum(type)}' changed to $changed");
-                    return true;
-                  },
-                  mediaLinkInsertInterceptor: (String url, InsertFileType type) {
-                    print(url);
-                    return true;
-                  },
-                  mediaUploadInterceptor: (PlatformFile file, InsertFileType type) async {
-                    print(file.name); //filename
-                    print(file.size); //size in bytes
-                    print(file.extension); //file extension (eg jpeg or mp4)
-                    return true;
-                  },
                 ),
                 otherOptions: OtherOptions(height: 550),
                 callbacks: Callbacks(onBeforeCommand: (String? currentHtml) {

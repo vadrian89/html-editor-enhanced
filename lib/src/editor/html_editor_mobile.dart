@@ -26,9 +26,9 @@ class HtmlEditor extends StatefulWidget {
     required this.controller,
     this.callbacks,
     this.htmlEditorOptions = const HtmlEditorOptions(),
-    this.htmlToolbarOptions = const HtmlToolbarOptions(),
     this.otherOptions = const OtherOptions(),
     this.plugins = const [],
+    this.toolbar,
   }) : assert(!kIsWeb);
 
   /// The controller that is passed to the widget, which allows multiple [HtmlEditor]
@@ -42,14 +42,14 @@ class HtmlEditor extends StatefulWidget {
   /// Defines options for the html editor
   final HtmlEditorOptions htmlEditorOptions;
 
-  /// Defines options for the editor toolbar
-  final HtmlToolbarOptions htmlToolbarOptions;
-
   /// Defines other options
   final OtherOptions otherOptions;
 
   /// Sets the list of Summernote plugins enabled in the editor.
   final List<Plugins> plugins;
+
+  /// The toolbar to use for the editor.
+  final HtmlEditorToolbar? toolbar;
 
   @override
   State<HtmlEditor> createState() => _HtmlEditorState();
@@ -134,6 +134,7 @@ class _HtmlEditorState extends State<HtmlEditor> {
           initialFile: filePath,
           height: docHeight + 10,
           decoration: widget.otherOptions.decoration,
+          toolbar: widget.toolbar?.copyWith(callbacks: widget.callbacks),
           onWebViewCreated: (InAppWebViewController controller) {
             widget.controller.editorController = controller;
             controller.addJavaScriptHandler(

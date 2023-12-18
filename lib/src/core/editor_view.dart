@@ -67,16 +67,7 @@ class HtmlEditorView extends StatelessWidget {
   final Set<Factory<OneSequenceGestureRecognizer>>? gestureRecognizers;
 
   /// {@template HtmlEditorWebView.toolbar}
-  /// Defines the position of the [toolbar].
-  ///
-  /// If [toolbar] is not null, this will be ignored.
-  /// {@endtemplate}
-  final ToolbarPosition toolbarPosition;
-
-  /// {@template HtmlEditorWebView.toolbar}
   /// The toolbar widget to be displayed above or below the editor
-  ///
-  /// If this is not null, [toolbarPosition] will be ignored.
   /// {@endtemplate}
   final HtmlEditorToolbar? toolbar;
 
@@ -127,7 +118,6 @@ class HtmlEditorView extends StatelessWidget {
     this.onConsoleMessage,
     this.onWindowFocus,
     this.onLoadStop,
-    this.toolbarPosition = ToolbarPosition.aboveEditor,
     this.toolbar,
   });
 
@@ -145,9 +135,9 @@ class HtmlEditorView extends StatelessWidget {
 
     return Column(
       children: [
-        if (toolbarPosition == ToolbarPosition.aboveEditor) toolbar!,
+        if (toolbar!.position == ToolbarPosition.above) toolbar!,
         Expanded(child: _webView),
-        if (toolbarPosition == ToolbarPosition.belowEditor) toolbar!,
+        if (toolbar!.position == ToolbarPosition.bellow) toolbar!,
       ],
     );
   }

@@ -20,10 +20,10 @@ class HtmlEditor extends StatefulWidget {
     required this.controller,
     this.callbacks,
     this.htmlEditorOptions = const HtmlEditorOptions(),
-    this.htmlToolbarOptions = const HtmlToolbarOptions(),
     this.otherOptions = const OtherOptions(),
     this.plugins = const [],
     required this.initBC,
+    this.toolbar,
   }) : assert(kIsWeb);
 
   final BuildContext initBC;
@@ -39,20 +39,22 @@ class HtmlEditor extends StatefulWidget {
   /// Defines options for the html editor
   final HtmlEditorOptions htmlEditorOptions;
 
-  /// Defines options for the editor toolbar
-  final HtmlToolbarOptions htmlToolbarOptions;
-
   /// Defines other options
   final OtherOptions otherOptions;
 
   /// Sets the list of Summernote plugins enabled in the editor.
   final List<Plugins> plugins;
 
+  /// The toolbar to use for the editor.
+  final HtmlEditorToolbar? toolbar;
+
   @override
   State<HtmlEditor> createState() => _HtmlEditorState();
 }
 
 class _HtmlEditorState extends State<HtmlEditor> {
+  HtmlEditorToolbar? _toolbar;
+
   /// The view ID for the IFrameElement. Must be unique.
   late String createdViewId;
 
@@ -73,6 +75,7 @@ class _HtmlEditorState extends State<HtmlEditor> {
 
   @override
   void initState() {
+    _toolbar = widget.toolbar?.copyWith(callbacks: widget.callbacks);
     actualHeight = widget.otherOptions.height;
     createdViewId = getRandString(10);
     widget.controller.viewId = createdViewId;
@@ -542,13 +545,7 @@ class _HtmlEditorState extends State<HtmlEditor> {
       height: widget.htmlEditorOptions.autoAdjustHeight ? actualHeight : widget.otherOptions.height,
       child: Column(
         children: <Widget>[
-          widget.htmlToolbarOptions.toolbarPosition == ToolbarPosition.aboveEditor
-              ? HtmlEditorToolbar(
-                  key: toolbarKey,
-                  controller: widget.controller,
-                  htmlToolbarOptions: widget.htmlToolbarOptions,
-                  callbacks: widget.callbacks)
-              : const SizedBox.shrink(),
+          if (_toolbar?.position == ToolbarPosition.above) _toolbar!,
           Expanded(
               child: Directionality(
                   textDirection: TextDirection.ltr,
@@ -566,13 +563,7 @@ class _HtmlEditorState extends State<HtmlEditor> {
                                   : widget.otherOptions.height);
                         }
                       }))),
-          widget.htmlToolbarOptions.toolbarPosition == ToolbarPosition.belowEditor
-              ? HtmlEditorToolbar(
-                  key: toolbarKey,
-                  controller: widget.controller,
-                  htmlToolbarOptions: widget.htmlToolbarOptions,
-                  callbacks: widget.callbacks)
-              : const SizedBox.shrink(),
+          if (_toolbar?.position == ToolbarPosition.above) _toolbar!,
         ],
       ),
     );

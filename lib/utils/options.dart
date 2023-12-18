@@ -151,8 +151,6 @@ class HtmlToolbarOptions {
     this.onDropdownChanged,
     this.onOtherFileLinkInsert,
     this.onOtherFileUpload,
-    this.toolbarType = ToolbarType.nativeScrollable,
-    this.toolbarPosition = ToolbarPosition.aboveEditor,
     this.videoExtensions,
     this.dropdownElevation = 8,
     this.dropdownIcon,
@@ -307,16 +305,6 @@ class HtmlToolbarOptions {
   ///
   /// By default any other extension is allowed.
   final List<String>? otherFileExtensions;
-
-  /// Controls how the toolbar displays. See [ToolbarType] for more details.
-  ///
-  /// By default the toolbar is rendered as a scrollable one-line list.
-  final ToolbarType toolbarType;
-
-  /// Controls where the toolbar is positioned. See [ToolbarPosition] for more details.
-  ///
-  /// By default the toolbar is above the editor.
-  final ToolbarPosition toolbarPosition;
 
   /// Allows you to set the allowed extensions when a user inserts a video.
   ///

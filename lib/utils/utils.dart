@@ -32,6 +32,7 @@ Iterable<T> intersperse<T>(T element, Iterable<T> iterable) sync* {
 }
 
 /// Generates a random string to be used as the [VisibilityDetector] key.
+///
 /// Technically this limits the number of editors to a finite number, but
 /// nobody will be embedding enough editors to reach the theoretical limit
 /// (yes, this is a challenge ;-) )
