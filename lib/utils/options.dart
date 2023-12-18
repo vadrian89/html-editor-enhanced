@@ -206,7 +206,7 @@ class HtmlToolbarOptions {
   final List<int> customToolbarInsertionIndices;
 
   /// Sets which options are visible in the toolbar for the editor.
-  final List<ToolbarButton> defaultToolbarButtons;
+  final List<Toolbar> defaultToolbarButtons;
 
   /// Allows you to set the allowed extensions when a user inserts an image
   ///
