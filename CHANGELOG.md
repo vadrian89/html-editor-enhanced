@@ -1,4 +1,4 @@
-## [0.0.2] = 2023-01-25
+## [0.0.2] = 2024-01-04
 * Updated changelog
 * Added platform requirements and InAppWebView migration guide
 
