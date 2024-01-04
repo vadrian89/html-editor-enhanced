@@ -17,6 +17,13 @@ Main goals of this package is to:
 
 ## Setup
 
+Platform requirements for **InAppWebView**:
+**Android:** minSdkVersion >= 19, compileSdk >= 34, AGP version >= 7.3.0
+**iOS 9.0+:** --ios-language swift, Xcode version >= 14.3
+**MacOS 10.11+:** Xcode version >= 14.3
+
+[Migration guide for InAppWebView](https://inappwebview.dev/docs/migration-guide/)
+
 Add `html_editor_plus: ^0.0.1` as dependency to your pubspec.yaml.
 
 Make sure to declare internet support inside `AndroidManifest.xml`: `<uses-permission android:name="android.permission.INTERNET"/>`
