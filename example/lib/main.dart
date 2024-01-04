@@ -21,12 +21,12 @@ class HtmlEditorExampleApp extends StatelessWidget {
         darkTheme: ThemeData.dark(useMaterial3: false),
         home: showPlusExample
             ? const HtmlEditorPlusExample()
-            : HtmlEditorExample(title: 'Flutter HTML Editor Example'),
+            : const HtmlEditorExample(title: 'Flutter HTML Editor Example'),
       );
 }
 
 class HtmlEditorExample extends StatefulWidget {
-  HtmlEditorExample({Key? key, required this.title}) : super(key: key);
+  const HtmlEditorExample({super.key, required this.title});
 
   final String title;
 
