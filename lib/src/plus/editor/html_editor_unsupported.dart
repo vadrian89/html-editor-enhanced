@@ -52,6 +52,12 @@ class HtmlEditor extends StatelessWidget {
   /// {@macro HtmlEditorField.onKeydown}
   final ValueChanged<int>? onKeydown;
 
+  /// {@macro HtmlEditorField.onMouseUp}
+  final VoidCallback? onMouseUp;
+
+  /// {@macro HtmlEditorField.onMouseDown}
+  final VoidCallback? onMouseDown;
+
   const HtmlEditor({
     super.key,
     this.resizeMode = ResizeMode.resizeToParent,
@@ -66,6 +72,8 @@ class HtmlEditor extends StatelessWidget {
     this.onKeyup,
     this.onKeydown,
     this.hint,
+    this.onMouseUp,
+    this.onMouseDown,
   });
 
   @override

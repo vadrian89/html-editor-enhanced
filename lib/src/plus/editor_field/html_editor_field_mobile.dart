@@ -58,6 +58,12 @@ class HtmlEditorField extends StatefulWidget {
   /// {@macro HtmlEditorField.onKeydown}
   final ValueChanged<int>? onKeydown;
 
+  /// {@macro HtmlEditorField.onMouseUp}
+  final VoidCallback? onMouseUp;
+
+  /// {@macro HtmlEditorField.onMouseDown}
+  final VoidCallback? onMouseDown;
+
   const HtmlEditorField({
     super.key,
     required this.controller,
@@ -72,6 +78,8 @@ class HtmlEditorField extends StatefulWidget {
     this.onKeyup,
     this.onKeydown,
     this.hint,
+    this.onMouseUp,
+    this.onMouseDown,
   });
 
   @override
@@ -116,6 +124,8 @@ class _HtmlEditorFieldState extends State<HtmlEditorField> {
       enableOnImageUploadError: widget.onImageUploadError != null,
       enableOnKeydown: widget.onKeydown != null,
       enableOnKeyup: widget.onKeyup != null,
+      enableOnMouseUp: widget.onMouseUp != null,
+      enableOnMouseDown: widget.onMouseDown != null,
     );
     _controller = widget.controller;
     _controller.addListener(_controllerListener);
@@ -185,11 +195,7 @@ class _HtmlEditorFieldState extends State<HtmlEditorField> {
     );
     await _webviewController!.injectJavascriptFileFromAsset(assetFilePath: _jqueryPath);
     await _webviewController!.injectJavascriptFileFromAsset(assetFilePath: _summernotePath);
-    await _webviewController!.evaluateJavascript(
-      source: _adapter.summernoteInit(
-        summernoteCallbacks: _adapter.summernoteCallbacks(),
-      ),
-    );
+    await _webviewController!.evaluateJavascript(source: _adapter.summernoteInit());
   }
 
   void _parseHandlerMessages(EditorMessage message) {
@@ -208,6 +214,8 @@ class _HtmlEditorFieldState extends State<HtmlEditorField> {
         ),
       EditorCallbacks.onKeyup => widget.onKeyup?.call(int.parse(message.payload!)),
       EditorCallbacks.onKeydown => widget.onKeydown?.call(int.parse(message.payload!)),
+      EditorCallbacks.onMouseUp => widget.onMouseUp?.call(),
+      EditorCallbacks.onMouseDown => widget.onMouseDown?.call(),
       _ => debugPrint("Uknown message received from editor: $message"),
     };
   }

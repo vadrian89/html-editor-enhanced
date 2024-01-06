@@ -69,6 +69,8 @@ window.parent.addEventListener('message', handleMessage, false);
     super.enableOnImageUploadError = false,
     super.enableOnKeyup = false,
     super.enableOnKeydown = false,
+    super.enableOnMouseUp = false,
+    super.enableOnMouseDown = false,
   });
 
   @override
@@ -88,7 +90,6 @@ window.parent.addEventListener('message', handleMessage, false);
       spellCheck: spellCheck,
       maximumFileSize: maximumFileSize,
       customOptions: customOptions,
-      summernoteCallbacks: summernoteCallbacks,
     )}
 });
 </script> 

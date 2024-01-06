@@ -44,6 +44,12 @@ abstract class SummernoteAdapter {
   /// If the [EditorCallbacks.onKeydown] should be enabled.
   final bool enableOnKeydown;
 
+  /// If the [EditorCallbacks.onMouseUp] should be enabled.
+  final bool enableOnMouseUp;
+
+  /// If the [EditorCallbacks.onMouseDown] should be enabled.
+  final bool enableOnMouseDown;
+
   /// Build string for [EditorCallbacks.onInit] callback.
   String get onInitCallback => summernoteCallback(event: EditorCallbacks.onInit);
 
@@ -80,6 +86,20 @@ abstract class SummernoteAdapter {
 
   /// Build string for [EditorCallbacks.onKeydown] callback.
   String get onKeydownCallback => summernoteCallback(event: EditorCallbacks.onKeydown);
+
+  /// Build string for [EditorCallbacks.onMouseUp] callback.
+  String get onMouseUpCallback => jqueryOnEventHandler(
+        selector: summernoteSelector,
+        event: "summernote.mouseup",
+        body: messageHandler(event: EditorCallbacks.onMouseUp),
+      );
+
+  /// Build string for [EditorCallbacks.onMouseDown] callback.
+  String get onMouseDownCallback => jqueryOnEventHandler(
+        selector: summernoteSelector,
+        event: "summernote.mousedown",
+        body: messageHandler(event: EditorCallbacks.onMouseDown),
+      );
 
   /// Build a string which contains javascript specific to the current platform.
   ///
@@ -149,6 +169,8 @@ abstract class SummernoteAdapter {
     this.enableOnImageUploadError = false,
     this.enableOnKeyup = false,
     this.enableOnKeydown = false,
+    this.enableOnMouseUp = false,
+    this.enableOnMouseDown = false,
   });
 
   factory SummernoteAdapter.web({
@@ -162,6 +184,8 @@ abstract class SummernoteAdapter {
     bool enableOnImageUploadError = false,
     bool enableOnKeyup = false,
     bool enableOnKeydown = false,
+    bool enableOnMouseUp = false,
+    bool enableOnMouseDown = false,
   }) =>
       SummernoteAdapterWeb(
         key: key,
@@ -174,6 +198,7 @@ abstract class SummernoteAdapter {
         enableOnImageUploadError: enableOnImageUploadError,
         enableOnKeyup: enableOnKeyup,
         enableOnKeydown: enableOnKeydown,
+        enableOnMouseUp: enableOnMouseUp,
       );
 
   factory SummernoteAdapter.inAppWebView({
@@ -187,6 +212,8 @@ abstract class SummernoteAdapter {
     bool enableOnImageUploadError = false,
     bool enableOnKeyup = false,
     bool enableOnKeydown = false,
+    bool enableOnMouseUp = false,
+    bool enableOnMouseDown = false,
   }) =>
       SummernoteAdapterInappWebView(
         key: key,
@@ -199,6 +226,8 @@ abstract class SummernoteAdapter {
         enableOnImageUploadError: enableOnImageUploadError,
         enableOnKeyup: enableOnKeyup,
         enableOnKeydown: enableOnKeydown,
+        enableOnMouseUp: enableOnMouseUp,
+        enableOnMouseDown: enableOnMouseDown,
       );
 
   /// Initialise the summernote editor.
@@ -216,7 +245,6 @@ abstract class SummernoteAdapter {
     bool spellCheck = false,
     int maximumFileSize = 10485760,
     String customOptions = "",
-    List<String> summernoteCallbacks = const [],
   }) =>
       '''
 function toggleCodeView() {
@@ -320,9 +348,11 @@ $summernoteSelector.summernote({
   maximumFileSize: $maximumFileSize,
   ${customOptions.trim().isNotEmpty ? "$customOptions," : ""}
   callbacks: {
-    ${summernoteCallbacks.join(",\n")}
+    ${summernoteCallbacks().join(",\n")}
   }
 });
+
+${jsCallbacks().join("\n")}
   
 $platformSpecificJavascript
   
@@ -380,41 +410,10 @@ logDebug("Summernote initialised");
         if (enableOnKeyup) onKeyupCallback,
       ];
 
-  /// Build the function called for `onKeydown` event which emits `characterCount`.
-  String onCharacterCountCallbackFunction({
-    required String messageHandler,
-    int? characterLimit,
-  }) =>
-      javaScriptCallbackFunction(
-        args: const ["e"],
-        body: '''
-          var chars = \$(".note-editable").text();
-          var totalChars = chars.length.toString();
-          ${(characterLimit != null) ? _characterCountAllowedKeys(characterLimit) : ""}
-          $messageHandler
-        ''',
-      );
-
-  String _characterCountAllowedKeys(int characterLimit) => '''
-    allowedKeys = (
-      e.which === 8 ||  /* BACKSPACE */
-      e.which === 35 || /* END */
-      e.which === 36 || /* HOME */
-      e.which === 37 || /* LEFT */
-      e.which === 38 || /* UP */
-      e.which === 39 || /* RIGHT*/
-      e.which === 40 || /* DOWN */
-      e.which === 46 || /* DEL*/
-      e.ctrlKey === true && e.which === 65 || /* CTRL + A */
-      e.ctrlKey === true && e.which === 88 || /* CTRL + X */
-      e.ctrlKey === true && e.which === 67 || /* CTRL + C */
-      e.ctrlKey === true && e.which === 86 || /* CTRL + V */
-      e.ctrlKey === true && e.which === 90    /* CTRL + Z */
-    );
-    if (!allowedKeys && \$(e.target).text().length >= $characterLimit) {
-      e.preventDefault();
-    }
-''';
+  List<String> jsCallbacks() => [
+        onMouseDownCallback,
+        onMouseUpCallback,
+      ];
 
   String onSelectionChangeFunction({required String messageHandler}) => '''
     function onSelectionChange() {
@@ -481,26 +480,37 @@ logDebug("Summernote initialised");
         }
 ''';
 
-  /// Build a JS callback for the summernote editor.
+  /// Build a summernote callback for the editor.
   ///
   /// If the [body] is not provided, the [messageHandler] will be used.
   String summernoteCallback({
     required EditorCallbacks event,
     String? body,
   }) =>
-      "${event.callback}: ${javaScriptCallbackFunction(
+      "${event.callback}: ${javaScriptCallbackClosure(
         args: event.args,
         body: body ?? messageHandler(event: event, payload: event.payload),
       )}";
 
+  /// Build a jQuery handler for different type of events.
+  ///
+  /// [selector] is a jQuery selector for the element to which the event is attached.
+  String jqueryOnEventHandler({
+    required String selector,
+    required String event,
+    List<String> args = const [],
+    required String body,
+  }) =>
+      "$selector.on('$event', ${javaScriptCallbackClosure(args: args, body: body)});";
+
   /// Build a callable javascript function.
   String javascriptFunction({required String name, String? arg}) => "$name(${arg ?? ""});";
 
-  /// Build a javascript function.
+  /// Build a closure for a javascript callback.
   ///
   /// [args] are the arguments of the function.
   /// [body] is the body of the function.
-  String javaScriptCallbackFunction({List<String> args = const [], required String body}) => '''
+  String javaScriptCallbackClosure({List<String> args = const [], required String body}) => '''
     function(${args.join(', ')}) {
       $body
     }

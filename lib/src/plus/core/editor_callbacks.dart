@@ -14,7 +14,9 @@ enum EditorCallbacks implements Comparable<EditorCallbacks> {
   onImageUpload(callback: "onImageUpload", args: ["files"]),
   onImageUploadError(callback: "onImageUploadError", args: ["file", "error"]),
   onKeyup(callback: "onKeyup", args: ["e"], payload: "e.keyCode.toString()"),
-  onKeydown(callback: "onKeydown", args: ["e"], payload: "e.keyCode.toString()");
+  onKeydown(callback: "onKeydown", args: ["e"], payload: "e.keyCode.toString()"),
+  onMouseUp(callback: "onMouseUp"),
+  onMouseDown(callback: "onMouseDown");
 
   /// The name of the event.
   final String callback;

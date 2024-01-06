@@ -44,6 +44,8 @@ class _HtmlEditorPlusExampleState extends State<HtmlEditorPlusExample> {
                 onImageUploadError: (value) => print("Image upload failed with error: $value"),
                 onKeyup: (value) => print("Key up event: $value"),
                 onKeydown: (value) => print("Key down event: $value"),
+                onMouseUp: () => print("Mouse up!"),
+                onMouseDown: () => print("Mouse down!"),
               ),
             ),
             EditorControls(

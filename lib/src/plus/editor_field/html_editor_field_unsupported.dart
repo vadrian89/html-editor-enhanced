@@ -97,6 +97,16 @@ class HtmlEditorField extends StatelessWidget {
   /// {@endtemplate}
   final ValueChanged<int>? onKeydown;
 
+  /// {@template HtmlEditorField.onMouseUp}
+  /// Callback to be called when the user presses the mouse button while the cursor is in editor.
+  /// {@endtemplate}
+  final VoidCallback? onMouseUp;
+
+  /// {@template HtmlEditorField.onMouseDown}
+  /// Callback to be called when the user releases the mouse button while the cursor is in editor.
+  /// {@endtemplate}
+  final VoidCallback? onMouseDown;
+
   const HtmlEditorField({
     super.key,
     required this.controller,
@@ -111,6 +121,8 @@ class HtmlEditorField extends StatelessWidget {
     this.onKeyup,
     this.onKeydown,
     this.hint,
+    this.onMouseUp,
+    this.onMouseDown,
   });
 
   @override
