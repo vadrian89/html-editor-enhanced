@@ -247,7 +247,7 @@ class _DropdownMenuItemButtonState<T> extends State<_DropdownMenuItemButton<T>> 
         widget.constraints.maxHeight,
         widget.itemIndex,
       );
-      widget.route.scrollController!.animateTo(
+      widget.route.scrollController?.animateTo(
         menuLimits.scrollOffset,
         curve: Curves.easeInOut,
         duration: const Duration(milliseconds: 100),
@@ -389,6 +389,7 @@ class _DropdownMenuState<T> extends State<_DropdownMenu<T>> {
                 child: Scrollbar(
                   thumbVisibility: true,
                   child: ListView(
+                    primary: true,
                     padding: kMaterialListPadding,
                     shrinkWrap: true,
                     children: children,
