@@ -50,6 +50,12 @@ class HtmlEditorController extends ValueNotifier<HtmlEditorValue> {
           ? ""
           : html;
 
+  /// Getter which returns the count of the human readable characters.
+  ///
+  /// Using the following regular expression to remove all html tags, tabs, new lines,
+  /// spaces and html entities: `RegExp(r"<[^>]*>|[\t\n\r ]|&[^;]+;")`
+  int get characterCount => html.replaceAll(RegExp(r"<[^>]*>|[\t\n\r ]|&[^;]+;"), "").trim().length;
+
   /// Change the current html value of the editor.
   ///
   /// Listeners will be notified of the change.

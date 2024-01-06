@@ -18,11 +18,12 @@ class _HtmlEditorPlusExampleState extends State<HtmlEditorPlusExample> {
   @override
   void initState() {
     super.initState();
-    _controller = HtmlEditorController(initialHtml: "Initial text");
+    _controller = HtmlEditorController(initialHtml: "Initial text")..addListener(_onHtmlChanged);
   }
 
   @override
   void dispose() {
+    _controller.removeListener(_onHtmlChanged);
     _controller.dispose();
     super.dispose();
   }
@@ -130,4 +131,9 @@ class _HtmlEditorPlusExampleState extends State<HtmlEditorPlusExample> {
           ),
         ],
       );
+
+  void _onHtmlChanged() {
+    print("Current HTML value: ${_controller.html}");
+    print("Current character count: ${_controller.characterCount}");
+  }
 }
