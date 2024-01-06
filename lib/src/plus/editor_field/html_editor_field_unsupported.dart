@@ -37,7 +37,7 @@ class HtmlEditorField extends StatelessWidget {
   /// {@endtemplate}
   final ThemeData? themeData;
 
-  /// {@template HtmlEditorField.intialMobileOptions}
+  /// {@template HtmlEditorField.inAppWebViewSettings}
   /// The initial options for the [InAppWebViewSettings] used only on mobile platforms.
   ///
   /// If not specified, these default options are used:
@@ -51,7 +51,7 @@ class HtmlEditorField extends StatelessWidget {
   /// );
   /// ```
   /// {@endtemplate}
-  final InAppWebViewSettings? intialMobileOptions;
+  final InAppWebViewSettings? inAppWebViewSettings;
 
   /// {@template HtmlEditorField.onInit}
   /// Callback to be called when the editor is initialized.
@@ -93,7 +93,7 @@ class HtmlEditorField extends StatelessWidget {
     required this.controller,
     this.resizeMode = ResizeMode.resizeToParent,
     this.themeData,
-    this.intialMobileOptions,
+    this.inAppWebViewSettings,
     this.onInit,
     this.onFocus,
     this.onBlur,

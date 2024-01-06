@@ -25,8 +25,8 @@ class HtmlEditorField extends StatefulWidget {
   /// {@macro ResizeMode}
   final ResizeMode resizeMode;
 
-  /// {@macro HtmlEditorField.intialMobileOptions}
-  final InAppWebViewSettings? intialMobileOptions;
+  /// {@macro HtmlEditorField.inAppWebViewSettings}
+  final InAppWebViewSettings? inAppWebViewSettings;
 
   /// {@macro HtmlEditorField.controller}
   final HtmlEditorController controller;
@@ -59,7 +59,7 @@ class HtmlEditorField extends StatefulWidget {
     super.key,
     required this.controller,
     this.resizeMode = ResizeMode.resizeToParent,
-    this.intialMobileOptions,
+    this.inAppWebViewSettings,
     this.themeData,
     this.onInit,
     this.onFocus,
@@ -116,7 +116,7 @@ class _HtmlEditorFieldState extends State<HtmlEditorField> {
     _controller.addListener(_controllerListener);
     _currentValueNotifier = ValueNotifier(_controller.clonedValue);
     _eventsSubscription = _controller.events.listen(_parseEvents);
-    _initialOptions = widget.intialMobileOptions ??
+    _initialOptions = widget.inAppWebViewSettings ??
         InAppWebViewSettings(
           javaScriptEnabled: true,
           transparentBackground: true,
@@ -127,11 +127,6 @@ class _HtmlEditorFieldState extends State<HtmlEditorField> {
     _keyboardVisibilitySubscription = _keyboardVisibilityStream.listen(
       _onKeyboardVisibilityChanged,
     );
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
   }
 
   @override

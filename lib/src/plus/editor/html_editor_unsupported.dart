@@ -25,8 +25,8 @@ class HtmlEditor extends StatelessWidget {
   /// If not specified, the default theme data is used, provided from Theme.of(context).
   final ThemeData? themeData;
 
-  /// {@macro HtmlEditorField.intialMobileOptions}
-  final InAppWebViewSettings? intialMobileOptions;
+  /// {@macro HtmlEditorField.inAppWebViewSettings}
+  final InAppWebViewSettings? inAppWebViewSettings;
 
   /// {@macro HtmlEditorField.onInit}
   final VoidCallback? onInit;
@@ -52,7 +52,7 @@ class HtmlEditor extends StatelessWidget {
   const HtmlEditor({
     super.key,
     this.resizeMode = ResizeMode.resizeToParent,
-    this.intialMobileOptions,
+    this.inAppWebViewSettings,
     this.controller,
     this.themeData,
     this.onInit,

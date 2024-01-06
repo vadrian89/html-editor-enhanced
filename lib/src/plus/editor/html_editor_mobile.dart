@@ -14,8 +14,8 @@ class HtmlEditor extends StatefulWidget {
   /// {@macro ResizeMode}
   final ResizeMode resizeMode;
 
-  /// {@macro HtmlEditorField.intialMobileOptions}
-  final InAppWebViewSettings? intialMobileOptions;
+  /// {@macro HtmlEditorField.inAppWebViewSettings}
+  final InAppWebViewSettings? inAppWebViewSettings;
 
   /// {@macro HtmlEditorField.controller}
   final HtmlEditorController? controller;
@@ -47,7 +47,7 @@ class HtmlEditor extends StatefulWidget {
   const HtmlEditor({
     super.key,
     this.resizeMode = ResizeMode.resizeToParent,
-    this.intialMobileOptions,
+    this.inAppWebViewSettings,
     this.controller,
     this.themeData,
     this.onInit,
@@ -92,7 +92,7 @@ class _HtmlEditorState extends State<HtmlEditor> {
         controller: _controller,
         resizeMode: widget.resizeMode,
         themeData: _themeData,
-        intialMobileOptions: widget.intialMobileOptions,
+        inAppWebViewSettings: widget.inAppWebViewSettings,
         onInit: widget.onInit,
         onFocus: widget.onFocus,
         onBlur: widget.onBlur,

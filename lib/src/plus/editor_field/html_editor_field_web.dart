@@ -117,11 +117,6 @@ class _HtmlEditorFieldState extends State<HtmlEditorField> {
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
-
-  @override
   void dispose() {
     _eventsSubscription.cancel();
     _controller.removeListener(_controllerListener);
