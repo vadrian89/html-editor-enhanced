@@ -205,6 +205,12 @@ abstract class SummernoteAdapter {
     List<String> summernoteCallbacks = const [],
   }) =>
       '''
+function toggleCodeView() {
+  ${callSummernoteMethod(method: 'codeview.toggle')}
+  if (${resizeMode == ResizeMode.resizeToParent}) {
+    resizeToParent();
+  }
+}
 
 function uploadFile(file) {
   const reader = new FileReader();

@@ -42,7 +42,7 @@ class EditorSetHtml extends EditorEvent {
 ///
 /// It toggles between, normal view and code view.
 class EditorToggleView extends EditorEvent {
-  const EditorToggleView() : super("codeview.toggle");
+  const EditorToggleView() : super("toggleCodeView");
 }
 
 /// Notifty the editor to clear the content and remove all stored history.

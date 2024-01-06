@@ -193,17 +193,20 @@ ${_adapter.css(colorScheme: _themeData?.colorScheme)}
     final message = EditorMessage.fromEvent(
       key: _viewId,
       event: event,
-      type: switch (event) {
+      type: _eventType(event),
+    );
+    html.window.postMessage(jsonEncoder.convert(message.toJson()), '*');
+  }
+
+  String _eventType(EditorEvent event) => switch (event) {
         EditorReload() => "toIframe",
         EditorSetHtml() => "toIframe",
         EditorSetCursorToEnd() => "toIframe",
         EditorCreateLink() => "toIframe",
         EditorInsertImageLink() => "toIframe",
+        EditorToggleView() => "toIframe",
         _ => "toSummernote",
-      },
-    );
-    html.window.postMessage(jsonEncoder.convert(message.toJson()), '*');
-  }
+      };
 
   html.IFrameElement _initIframe() {
     final iframe = html.IFrameElement();

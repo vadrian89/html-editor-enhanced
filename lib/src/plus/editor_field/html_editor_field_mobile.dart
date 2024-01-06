@@ -221,9 +221,9 @@ class _HtmlEditorFieldState extends State<HtmlEditorField> {
     }
   }
 
-  void _parseEvents(EditorEvent event) {
+  Object? _parseEvents(EditorEvent event) {
     debugPrint("Sending message to editor: $event");
-    (switch (event) {
+    return switch (event) {
       EditorReload() => _webviewController!.reload(),
       EditorClearFocus() => SystemChannels.textInput.invokeMethod('TextInput.hide'),
       EditorCallFunction(:final method, :final payload) => _adapter.javascriptFunction(
@@ -235,6 +235,7 @@ class _HtmlEditorFieldState extends State<HtmlEditorField> {
             EditorSetHtml(:final method, :final payload) => "$method(${jsonEncode(payload)});",
             EditorResizeToParent(:final method) => "$method();",
             EditorSetCursorToEnd(:final method) => "$method();",
+            EditorToggleView(:final method) => "$method();",
             EditorInsertImageLink(:final method, :final payload) =>
               "$method(${jsonEncode(payload)});",
             _ => _adapter.callSummernoteMethod(
@@ -246,14 +247,8 @@ class _HtmlEditorFieldState extends State<HtmlEditorField> {
               ),
           },
         ),
-    });
-    _triggerExtraEvent(event);
+    };
   }
-
-  void _triggerExtraEvent(EditorEvent event) => switch (event) {
-        EditorToggleView() => _parseEvents(const EditorResizeToParent()),
-        _ => null,
-      };
 
   /// Function which clears the focus from the editor once the keyboard is hidden.
   ///

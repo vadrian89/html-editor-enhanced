@@ -32,6 +32,9 @@ function handleMessage(e) {
     }
     else if (method == "insertImage") {
       ${javascriptFunction(name: 'insertImage', arg: "payload")}
+    } 
+    else if (method == "toggleCodeView") {
+      ${javascriptFunction(name: 'toggleCodeView')}
     }
   }
   else if (e && e.data && e.data.includes("toSummernote")) {
