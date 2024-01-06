@@ -66,6 +66,8 @@ window.parent.addEventListener('message', handleMessage, false);
     super.enableOnFocus = false,
     super.enableOnImageUpload = false,
     super.enableOnImageUploadError = false,
+    super.enableOnKeyup = false,
+    super.enableOnKeydown = false,
   });
 
   @override

@@ -78,6 +78,16 @@ class HtmlEditorField extends StatelessWidget {
   /// {@endtemplate}
   final ValueChanged<HtmlEditorUploadError>? onImageUploadError;
 
+  /// {@template HtmlEditorField.onKeyup}
+  /// Callback to be called when a key is released.
+  /// {@endtemplate}
+  final ValueChanged<int>? onKeyup;
+
+  /// {@template HtmlEditorField.onKeydown}
+  /// Callback to be called when a key is pressed.
+  /// {@endtemplate}
+  final ValueChanged<int>? onKeydown;
+
   const HtmlEditorField({
     super.key,
     required this.controller,
@@ -89,6 +99,8 @@ class HtmlEditorField extends StatelessWidget {
     this.onBlur,
     this.onImageUpload,
     this.onImageUploadError,
+    this.onKeyup,
+    this.onKeydown,
   });
 
   @override

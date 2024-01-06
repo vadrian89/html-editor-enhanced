@@ -35,55 +35,48 @@ abstract class SummernoteAdapter {
   /// If the [EditorCallbacks.onImageUploadError] should be enabled.
   final bool enableOnImageUploadError;
 
+  /// If the [EditorCallbacks.onKeyup] should be enabled.
+  final bool enableOnKeyup;
+
+  /// If the [EditorCallbacks.onKeydown] should be enabled.
+  final bool enableOnKeydown;
+
   /// Build string for [EditorCallbacks.onInit] callback.
-  String get onInitCallback => summernoteCallback(
-        event: EditorCallbacks.onInit,
-        body: messageHandler(event: EditorCallbacks.onInit),
-      );
+  String get onInitCallback => summernoteCallback(event: EditorCallbacks.onInit);
 
   /// Build string for [EditorCallbacks.onChange] callback.
-  String get onChangeCallback => summernoteCallback(
-        event: EditorCallbacks.onChange,
-        args: const ["contents", "\$editable"],
-        body: messageHandler(event: EditorCallbacks.onChange, payload: "contents"),
-      );
+  String get onChangeCallback => summernoteCallback(event: EditorCallbacks.onChange);
 
   /// Build string for [EditorCallbacks.onChangeCodeview] callback.
   ///
   /// This callback is called when the content has changed while in codeview mode.
   String get onChangeCodeviewCallback => summernoteCallback(
         event: EditorCallbacks.onChangeCodeview,
-        args: const ["contents", "\$editable"],
-        body: messageHandler(event: EditorCallbacks.onChangeCodeview, payload: "contents"),
       );
 
   /// Build string for [EditorCallbacks.onFocus] callback.
-  String get onFocusCallback => summernoteCallback(
-        event: EditorCallbacks.onFocus,
-        args: const [],
-        body: messageHandler(event: EditorCallbacks.onFocus),
-      );
+  String get onFocusCallback => summernoteCallback(event: EditorCallbacks.onFocus);
 
   /// Build string for [EditorCallbacks.onBlur] callback.
-  String get onBlurCallback => summernoteCallback(
-        event: EditorCallbacks.onBlur,
-        args: const [],
-        body: messageHandler(event: EditorCallbacks.onBlur),
-      );
+  String get onBlurCallback => summernoteCallback(event: EditorCallbacks.onBlur);
 
   /// Build string for [EditorCallbacks.onImageUpload] callback.
   String get onImageUploadCallback => summernoteCallback(
         event: EditorCallbacks.onImageUpload,
-        args: const ["files"],
         body: "uploadFile(files[0])",
       );
 
   /// Build string for [EditorCallbacks.onImageUploadError] callback.
   String get onImageUploadErrorCallback => summernoteCallback(
         event: EditorCallbacks.onImageUploadError,
-        args: const ["file", "error"],
         body: "uploadError(file, error)",
       );
+
+  /// Build string for [EditorCallbacks.onKeyup] callback.
+  String get onKeyupCallback => summernoteCallback(event: EditorCallbacks.onKeyup);
+
+  /// Build string for [EditorCallbacks.onKeydown] callback.
+  String get onKeydownCallback => summernoteCallback(event: EditorCallbacks.onKeydown);
 
   /// Build a string which contains javascript specific to the current platform.
   ///
@@ -146,6 +139,8 @@ abstract class SummernoteAdapter {
     this.enableOnBlur = false,
     this.enableOnImageUpload = false,
     this.enableOnImageUploadError = false,
+    this.enableOnKeyup = false,
+    this.enableOnKeydown = false,
   });
 
   factory SummernoteAdapter.web({
@@ -156,6 +151,8 @@ abstract class SummernoteAdapter {
     bool enableOnBlur = false,
     bool enableOnImageUpload = false,
     bool enableOnImageUploadError = false,
+    bool enableOnKeyup = false,
+    bool enableOnKeydown = false,
   }) =>
       SummernoteAdapterWeb(
         key: key,
@@ -165,6 +162,8 @@ abstract class SummernoteAdapter {
         enableOnBlur: enableOnBlur,
         enableOnImageUpload: enableOnImageUpload,
         enableOnImageUploadError: enableOnImageUploadError,
+        enableOnKeyup: enableOnKeyup,
+        enableOnKeydown: enableOnKeydown,
       );
 
   factory SummernoteAdapter.inAppWebView({
@@ -175,6 +174,8 @@ abstract class SummernoteAdapter {
     bool enableOnBlur = false,
     bool enableOnImageUpload = false,
     bool enableOnImageUploadError = false,
+    bool enableOnKeyup = false,
+    bool enableOnKeydown = false,
   }) =>
       SummernoteAdapterInappWebView(
         key: key,
@@ -184,6 +185,8 @@ abstract class SummernoteAdapter {
         enableOnBlur: enableOnBlur,
         enableOnImageUpload: enableOnImageUpload,
         enableOnImageUploadError: enableOnImageUploadError,
+        enableOnKeyup: enableOnKeyup,
+        enableOnKeydown: enableOnKeydown,
       );
 
   /// Initialise the summernote editor.
@@ -365,6 +368,8 @@ logDebug("Summernote initialised");
         if (enableOnBlur) onBlurCallback,
         if (enableOnImageUpload) onImageUploadCallback,
         if (enableOnImageUploadError) onImageUploadErrorCallback,
+        if (enableOnKeydown) onKeydownCallback,
+        if (enableOnKeyup) onKeyupCallback,
       ];
 
   /// Build the function called for `onKeydown` event which emits `characterCount`.
@@ -469,12 +474,16 @@ logDebug("Summernote initialised");
 ''';
 
   /// Build a JS callback for the summernote editor.
+  ///
+  /// If the [body] is not provided, the [messageHandler] will be used.
   String summernoteCallback({
     required EditorCallbacks event,
-    List<String> args = const [],
-    String body = "",
+    String? body,
   }) =>
-      "${event.callback}: ${javaScriptCallbackFunction(args: args, body: body)}";
+      "${event.callback}: ${javaScriptCallbackFunction(
+        args: event.args,
+        body: body ?? messageHandler(event: event, payload: event.payload),
+      )}";
 
   /// Build a callable javascript function.
   String javascriptFunction({required String name, String? arg}) => "$name(${arg ?? ""});";

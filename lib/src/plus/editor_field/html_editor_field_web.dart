@@ -45,6 +45,12 @@ class HtmlEditorField extends StatefulWidget {
   /// {@macro HtmlEditorField.onImageUploadError}
   final ValueChanged<HtmlEditorUploadError>? onImageUploadError;
 
+  /// {@macro HtmlEditorField.onKeyup}
+  final ValueChanged<int>? onKeyup;
+
+  /// {@macro HtmlEditorField.onKeydown}
+  final ValueChanged<int>? onKeydown;
+
   const HtmlEditorField({
     super.key,
     required this.controller,
@@ -55,6 +61,8 @@ class HtmlEditorField extends StatefulWidget {
     this.onBlur,
     this.onImageUpload,
     this.onImageUploadError,
+    this.onKeyup,
+    this.onKeydown,
   });
 
   @override
@@ -96,6 +104,8 @@ class _HtmlEditorFieldState extends State<HtmlEditorField> {
       enableOnFocus: widget.onFocus != null,
       enableOnImageUpload: widget.onImageUpload != null,
       enableOnImageUploadError: widget.onImageUploadError != null,
+      enableOnKeydown: widget.onKeydown != null,
+      enableOnKeyup: widget.onKeyup != null,
     );
     _controller = widget.controller;
     _controller.addListener(_controllerListener);
@@ -165,6 +175,8 @@ ${_adapter.css(colorScheme: _themeData?.colorScheme)}
       EditorCallbacks.onImageUploadError => widget.onImageUploadError?.call(
           HtmlEditorUploadError.fromJson(message.payload!),
         ),
+      EditorCallbacks.onKeyup => widget.onKeyup?.call(int.parse(message.payload!)),
+      EditorCallbacks.onKeydown => widget.onKeydown?.call(int.parse(message.payload!)),
       _ => debugPrint("Uknown message received from iframe: $message"),
     };
   }

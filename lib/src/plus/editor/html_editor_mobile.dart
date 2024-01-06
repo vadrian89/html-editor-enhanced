@@ -38,6 +38,12 @@ class HtmlEditor extends StatefulWidget {
   /// {@macro HtmlEditorField.onImageUploadError}
   final ValueChanged<HtmlEditorUploadError>? onImageUploadError;
 
+  /// {@macro HtmlEditorField.onKeyup}
+  final ValueChanged<int>? onKeyup;
+
+  /// {@macro HtmlEditorField.onKeydown}
+  final ValueChanged<int>? onKeydown;
+
   const HtmlEditor({
     super.key,
     this.resizeMode = ResizeMode.resizeToParent,
@@ -49,6 +55,8 @@ class HtmlEditor extends StatefulWidget {
     this.onBlur,
     this.onImageUpload,
     this.onImageUploadError,
+    this.onKeyup,
+    this.onKeydown,
   });
 
   @override
@@ -90,5 +98,7 @@ class _HtmlEditorState extends State<HtmlEditor> {
         onBlur: widget.onBlur,
         onImageUpload: widget.onImageUpload,
         onImageUploadError: widget.onImageUploadError,
+        onKeyup: widget.onKeyup,
+        onKeydown: widget.onKeydown,
       );
 }

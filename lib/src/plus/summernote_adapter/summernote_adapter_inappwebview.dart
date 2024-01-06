@@ -16,6 +16,8 @@ class SummernoteAdapterInappWebView extends SummernoteAdapter {
     super.enableOnFocus = false,
     super.enableOnImageUpload = false,
     super.enableOnImageUploadError = false,
+    super.enableOnKeyup = false,
+    super.enableOnKeydown = false,
   });
 
   @override
