@@ -62,6 +62,34 @@ class HtmlEditorField extends StatelessWidget {
   /// {@endtemplate}
   final InAppWebViewSettings? inAppWebViewSettings;
 
+  /// {@template HtmlEditorField.maximumFileSize}
+  /// The maximum file size allowed to be uploaded, in `bytes`.
+  ///
+  /// If not specified, the default value is 10MB.
+  /// Currently doesn't seem to do anything.
+  /// {@endtemplate}
+  final int? maximumFileSize;
+
+  /// {@template HtmlEditorField.spellCheck}
+  /// If the spell check should be enabled.
+  ///
+  /// Defaults to `false`.
+  /// {@endtemplate}
+  final bool? spellCheck;
+
+  /// {@template HtmlEditorField.customOptions}
+  /// List of custom options to be added to the summernote initialiser.
+  ///
+  /// Example of element in the list: `"codeviewFilterRegex: 'custom-regex',"`. This will add the
+  /// option `codeviewFilterRegex: 'custom-regex'` to the summernote initialiser.
+  /// Don't forget the comma at the end of the string.
+  ///
+  /// The options will be joined together with a comma: `customOptions.join("\n")`.
+  ///
+  /// DO NOT ADD options which are already handled by the adapter.
+  /// {@endtemplate}
+  final List<String>? customOptions;
+
   /// {@template HtmlEditorField.onInit}
   /// Callback to be called when the editor is initialized.
   /// {@endtemplate}
@@ -113,6 +141,9 @@ class HtmlEditorField extends StatelessWidget {
     this.resizeMode = ResizeMode.resizeToParent,
     this.themeData,
     this.inAppWebViewSettings,
+    this.maximumFileSize,
+    this.spellCheck,
+    this.customOptions,
     this.onInit,
     this.onFocus,
     this.onBlur,

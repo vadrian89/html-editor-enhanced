@@ -8,6 +8,8 @@ import 'summernote_adapter_web.dart';
 import '../core/enums.dart';
 
 abstract class SummernoteAdapter {
+  static const _defaultMaxFileSize = 10 * 1024 * 1024;
+
   /// A unique key for editor.
   ///
   /// For web this is the id of the IFrameElement rendering the editor. It set to
@@ -25,6 +27,23 @@ abstract class SummernoteAdapter {
 
   /// The resize mode of the editor.
   final ResizeMode resizeMode;
+
+  /// The maximum file size allowed to be uploaded.
+  final int maximumFileSize;
+
+  /// If the spell check should be enabled.
+  final bool spellCheck;
+
+  /// List of custom options to be added to the summernote initialiser.
+  ///
+  /// Example of element in the list: `"codeviewFilterRegex: 'custom-regex',"`. This will add the
+  /// option `codeviewFilterRegex: 'custom-regex'` to the summernote initialiser.
+  /// Don't forget the comma at the end of the string.
+  ///
+  /// The options will be joined together with a comma: `customOptions.join("\n")`.
+  ///
+  /// DO NOT ADD options which are already handled by the adapter.
+  final List<String> customOptions;
 
   /// If the [EditorCallbacks.onFocus] should be enabled.
   final bool enableOnFocus;
@@ -163,6 +182,9 @@ abstract class SummernoteAdapter {
     this.summernoteSelector = "\$('#summernote-2')",
     this.hint,
     this.resizeMode = ResizeMode.resizeToParent,
+    this.maximumFileSize = _defaultMaxFileSize,
+    this.spellCheck = false,
+    this.customOptions = const [],
     this.enableOnFocus = false,
     this.enableOnBlur = false,
     this.enableOnImageUpload = false,
@@ -178,6 +200,9 @@ abstract class SummernoteAdapter {
     String summernoteSelector = "\$('#summernote-2')",
     String? hint,
     ResizeMode resizeMode = ResizeMode.resizeToParent,
+    int? maximumFileSize,
+    bool? spellCheck,
+    List<String>? customOptions,
     bool enableOnFocus = false,
     bool enableOnBlur = false,
     bool enableOnImageUpload = false,
@@ -192,6 +217,9 @@ abstract class SummernoteAdapter {
         summernoteSelector: summernoteSelector,
         hint: hint,
         resizeMode: resizeMode,
+        maximumFileSize: maximumFileSize ?? _defaultMaxFileSize,
+        spellCheck: spellCheck ?? false,
+        customOptions: customOptions ?? const [],
         enableOnFocus: enableOnFocus,
         enableOnBlur: enableOnBlur,
         enableOnImageUpload: enableOnImageUpload,
@@ -206,6 +234,9 @@ abstract class SummernoteAdapter {
     String summernoteSelector = "\$('#summernote-2')",
     String? hint,
     ResizeMode resizeMode = ResizeMode.resizeToParent,
+    int? maximumFileSize,
+    bool? spellCheck,
+    List<String>? customOptions,
     bool enableOnFocus = false,
     bool enableOnBlur = false,
     bool enableOnImageUpload = false,
@@ -220,6 +251,9 @@ abstract class SummernoteAdapter {
         summernoteSelector: summernoteSelector,
         hint: hint,
         resizeMode: resizeMode,
+        maximumFileSize: maximumFileSize ?? 1048576,
+        spellCheck: spellCheck ?? false,
+        customOptions: customOptions ?? const [],
         enableOnFocus: enableOnFocus,
         enableOnBlur: enableOnBlur,
         enableOnImageUpload: enableOnImageUpload,
@@ -230,23 +264,10 @@ abstract class SummernoteAdapter {
         enableOnMouseDown: enableOnMouseDown,
       );
 
-  /// Initialise the summernote editor.
-  ///
-  /// [hint] is the placeholder text.
-  /// [summernoteToolbar] is the string containing all the data about the toolbar.
-  /// [spellCheck] is whether to enable spell check.
-  /// https://summernote.org/deep-dive/#disable-spellchecking
-  /// [maximumFileSize] is the maximum file size allowed to be uploaded.
-  /// [customOptions] is the string containing all the custom options injected by the developer
-  /// using this package.
-  /// [summernoteCallbacks] is the list of callbacks to be set for the editor.
-  String summernoteInit({
-    String summernoteToolbar = "[]",
-    bool spellCheck = false,
-    int maximumFileSize = 10485760,
-    String customOptions = "",
-  }) =>
-      '''
+  /// Build a string which is used to initialise all the web code.
+  String init() => '''
+
+console.log("Maximum file size allowed: " + $maximumFileSize);
 function toggleCodeView() {
   ${callSummernoteMethod(method: 'codeview.toggle')}
   if (${resizeMode == ResizeMode.resizeToParent}) {
@@ -342,11 +363,11 @@ function resizeToParent() {
 $summernoteSelector.summernote({
   ${(hint?.trim().isNotEmpty ?? false) ? "placeholder: '$hint'," : ""}
   tabsize: 2,
-  toolbar: $summernoteToolbar,
+  toolbar: [],
   disableGrammar: false,
   spellCheck: $spellCheck,
-  maximumFileSize: $maximumFileSize,
-  ${customOptions.trim().isNotEmpty ? "$customOptions," : ""}
+  maximumImageFileSize: $maximumFileSize,
+  ${customOptions.join("\n")}
   callbacks: {
     ${summernoteCallbacks().join(",\n")}
   }

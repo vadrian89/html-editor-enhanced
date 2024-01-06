@@ -63,6 +63,9 @@ window.parent.addEventListener('message', handleMessage, false);
     super.summernoteSelector = "\$('#summernote-2')",
     super.hint,
     super.resizeMode = ResizeMode.resizeToParent,
+    super.customOptions,
+    super.maximumFileSize,
+    super.spellCheck,
     super.enableOnBlur = false,
     super.enableOnFocus = false,
     super.enableOnImageUpload = false,
@@ -74,23 +77,11 @@ window.parent.addEventListener('message', handleMessage, false);
   });
 
   @override
-  String summernoteInit({
-    String initialText = "",
-    String summernoteToolbar = "[]",
-    bool spellCheck = false,
-    int maximumFileSize = 10485760,
-    String customOptions = "",
-    List<String> summernoteCallbacks = const [],
-  }) {
+  String init() {
     return '''
 <script type="text/javascript">
 \$(document).ready(function () {
-  ${super.summernoteInit(
-      summernoteToolbar: summernoteToolbar,
-      spellCheck: spellCheck,
-      maximumFileSize: maximumFileSize,
-      customOptions: customOptions,
-    )}
+  ${super.init()}
 });
 </script> 
 ''';

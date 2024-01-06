@@ -33,6 +33,15 @@ class HtmlEditorField extends StatefulWidget {
   /// {@macro HtmlEditorField.themeData}
   final ThemeData? themeData;
 
+  /// {@macro HtmlEditorField.maximumFileSize}
+  final int? maximumFileSize;
+
+  /// {@macro HtmlEditorField.spellCheck}
+  final bool? spellCheck;
+
+  /// {@macro HtmlEditorField.customOptions}
+  final List<String>? customOptions;
+
   /// {@macro HtmlEditorField.onInit}
   final VoidCallback? onInit;
 
@@ -65,6 +74,9 @@ class HtmlEditorField extends StatefulWidget {
     required this.controller,
     this.resizeMode = ResizeMode.resizeToParent,
     this.themeData,
+    this.maximumFileSize,
+    this.spellCheck,
+    this.customOptions,
     this.onInit,
     this.onFocus,
     this.onBlur,
@@ -113,6 +125,9 @@ class _HtmlEditorFieldState extends State<HtmlEditorField> {
       key: _viewId,
       resizeMode: widget.resizeMode,
       hint: widget.hint,
+      customOptions: widget.customOptions,
+      spellCheck: widget.spellCheck,
+      maximumFileSize: widget.maximumFileSize,
       enableOnBlur: widget.onBlur != null,
       enableOnFocus: widget.onFocus != null,
       enableOnImageUpload: widget.onImageUpload != null,
@@ -155,7 +170,7 @@ class _HtmlEditorFieldState extends State<HtmlEditorField> {
 
   Future<void> _loadSummernote() async {
     final summernoteInit = '''
-${_adapter.summernoteInit()}
+${_adapter.init()}
 <style>
 ${_adapter.css(colorScheme: _themeData?.colorScheme)}
 </style>

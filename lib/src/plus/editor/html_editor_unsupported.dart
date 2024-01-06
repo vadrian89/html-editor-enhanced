@@ -31,6 +31,15 @@ class HtmlEditor extends StatelessWidget {
   /// {@macro HtmlEditorField.inAppWebViewSettings}
   final InAppWebViewSettings? inAppWebViewSettings;
 
+  /// {@macro HtmlEditorField.maximumFileSize}
+  final int? maximumFileSize;
+
+  /// {@macro HtmlEditorField.spellCheck}
+  final bool? spellCheck;
+
+  /// {@macro HtmlEditorField.customOptions}
+  final List<String>? customOptions;
+
   /// {@macro HtmlEditorField.onInit}
   final VoidCallback? onInit;
 
@@ -64,6 +73,9 @@ class HtmlEditor extends StatelessWidget {
     this.inAppWebViewSettings,
     this.controller,
     this.themeData,
+    this.maximumFileSize,
+    this.spellCheck,
+    this.customOptions,
     this.onInit,
     this.onFocus,
     this.onBlur,

@@ -37,6 +37,15 @@ class HtmlEditorField extends StatefulWidget {
   /// {@macro HtmlEditorField.themeData}
   final ThemeData? themeData;
 
+  /// {@macro HtmlEditorField.maximumFileSize}
+  final int? maximumFileSize;
+
+  /// {@macro HtmlEditorField.spellCheck}
+  final bool? spellCheck;
+
+  /// {@macro HtmlEditorField.customOptions}
+  final List<String>? customOptions;
+
   /// {@macro HtmlEditorField.onInit}
   final VoidCallback? onInit;
 
@@ -70,6 +79,9 @@ class HtmlEditorField extends StatefulWidget {
     this.resizeMode = ResizeMode.resizeToParent,
     this.inAppWebViewSettings,
     this.themeData,
+    this.maximumFileSize,
+    this.spellCheck,
+    this.customOptions,
     this.onInit,
     this.onFocus,
     this.onBlur,
@@ -118,6 +130,9 @@ class _HtmlEditorFieldState extends State<HtmlEditorField> {
       key: _viewId,
       resizeMode: widget.resizeMode,
       hint: widget.hint,
+      customOptions: widget.customOptions,
+      spellCheck: widget.spellCheck,
+      maximumFileSize: widget.maximumFileSize,
       enableOnBlur: widget.onBlur != null,
       enableOnFocus: widget.onFocus != null,
       enableOnImageUpload: widget.onImageUpload != null,
@@ -195,7 +210,7 @@ class _HtmlEditorFieldState extends State<HtmlEditorField> {
     );
     await _webviewController!.injectJavascriptFileFromAsset(assetFilePath: _jqueryPath);
     await _webviewController!.injectJavascriptFileFromAsset(assetFilePath: _summernotePath);
-    await _webviewController!.evaluateJavascript(source: _adapter.summernoteInit());
+    await _webviewController!.evaluateJavascript(source: _adapter.init());
   }
 
   void _parseHandlerMessages(EditorMessage message) {
