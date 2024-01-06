@@ -21,6 +21,9 @@ import '../summernote_adapter/summernote_adapter.dart';
 ///
 /// This is used for web.
 class HtmlEditorField extends StatefulWidget {
+  /// {@macro HtmlEditorField.hint}
+  final String? hint;
+
   /// {@macro ResizeMode}
   final ResizeMode resizeMode;
 
@@ -63,6 +66,7 @@ class HtmlEditorField extends StatefulWidget {
     this.onImageUploadError,
     this.onKeyup,
     this.onKeydown,
+    this.hint,
   });
 
   @override
@@ -100,6 +104,7 @@ class _HtmlEditorFieldState extends State<HtmlEditorField> {
     _adapter = SummernoteAdapter.web(
       key: _viewId,
       resizeMode: widget.resizeMode,
+      hint: widget.hint,
       enableOnBlur: widget.onBlur != null,
       enableOnFocus: widget.onFocus != null,
       enableOnImageUpload: widget.onImageUpload != null,

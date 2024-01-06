@@ -20,6 +20,9 @@ abstract class SummernoteAdapter {
   /// The javascript (jQuery) selector of the summernote editor.
   final String summernoteSelector;
 
+  /// {@macro HtmlEditorField.hint}
+  final String? hint;
+
   /// The resize mode of the editor.
   final ResizeMode resizeMode;
 
@@ -103,7 +106,11 @@ abstract class SummernoteAdapter {
 
     return '''
   $requiredCss
- 
+
+  .note-placeholder {
+    color: #${onSurface}73 !important;
+  }
+   
   .note-editing-area, .note-status-output, .note-codable, .CodeMirror, .CodeMirror-gutter, .note-modal-content, .note-input, .note-editable {
     background: #$surface !important;
   }
@@ -134,6 +141,7 @@ abstract class SummernoteAdapter {
   const SummernoteAdapter({
     required this.key,
     this.summernoteSelector = "\$('#summernote-2')",
+    this.hint,
     this.resizeMode = ResizeMode.resizeToParent,
     this.enableOnFocus = false,
     this.enableOnBlur = false,
@@ -146,6 +154,7 @@ abstract class SummernoteAdapter {
   factory SummernoteAdapter.web({
     required String key,
     String summernoteSelector = "\$('#summernote-2')",
+    String? hint,
     ResizeMode resizeMode = ResizeMode.resizeToParent,
     bool enableOnFocus = false,
     bool enableOnBlur = false,
@@ -157,6 +166,7 @@ abstract class SummernoteAdapter {
       SummernoteAdapterWeb(
         key: key,
         summernoteSelector: summernoteSelector,
+        hint: hint,
         resizeMode: resizeMode,
         enableOnFocus: enableOnFocus,
         enableOnBlur: enableOnBlur,
@@ -169,6 +179,7 @@ abstract class SummernoteAdapter {
   factory SummernoteAdapter.inAppWebView({
     required String key,
     String summernoteSelector = "\$('#summernote-2')",
+    String? hint,
     ResizeMode resizeMode = ResizeMode.resizeToParent,
     bool enableOnFocus = false,
     bool enableOnBlur = false,
@@ -180,6 +191,7 @@ abstract class SummernoteAdapter {
       SummernoteAdapterInappWebView(
         key: key,
         summernoteSelector: summernoteSelector,
+        hint: hint,
         resizeMode: resizeMode,
         enableOnFocus: enableOnFocus,
         enableOnBlur: enableOnBlur,
@@ -191,7 +203,7 @@ abstract class SummernoteAdapter {
 
   /// Initialise the summernote editor.
   ///
-  /// [hintText] is the placeholder text.
+  /// [hint] is the placeholder text.
   /// [summernoteToolbar] is the string containing all the data about the toolbar.
   /// [spellCheck] is whether to enable spell check.
   /// https://summernote.org/deep-dive/#disable-spellchecking
@@ -200,7 +212,6 @@ abstract class SummernoteAdapter {
   /// using this package.
   /// [summernoteCallbacks] is the list of callbacks to be set for the editor.
   String summernoteInit({
-    String hintText = "",
     String summernoteToolbar = "[]",
     bool spellCheck = false,
     int maximumFileSize = 10485760,
@@ -301,7 +312,7 @@ function resizeToParent() {
 }
   
 $summernoteSelector.summernote({
-  ${hintText.trim().isNotEmpty ? "placeholder: '$hintText'," : ""}
+  ${(hint?.trim().isNotEmpty ?? false) ? "placeholder: '$hint'," : ""}
   tabsize: 2,
   toolbar: $summernoteToolbar,
   disableGrammar: false,
@@ -320,9 +331,6 @@ if (${resizeMode == ResizeMode.resizeToParent}) {
   addEventListener("resize", (event) => resizeToParent());
 }
 
-
-
-  
 logDebug("Summernote initialised");
 ''';
 

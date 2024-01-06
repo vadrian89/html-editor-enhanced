@@ -12,6 +12,15 @@ import '../editor_controller.dart';
 ///
 /// This is used for unsupported platforms.
 class HtmlEditorField extends StatelessWidget {
+  /// {@template HtmlEditorField.hint}
+  /// The hint to display when the editor is empty.
+  ///
+  /// Should be a description of the expected input.
+  ///
+  /// Can be either plain text or html.
+  /// {@endtemplate}
+  final String? hint;
+
   /// {@macro ResizeMode}
   final ResizeMode resizeMode;
 
@@ -101,6 +110,7 @@ class HtmlEditorField extends StatelessWidget {
     this.onImageUploadError,
     this.onKeyup,
     this.onKeydown,
+    this.hint,
   });
 
   @override

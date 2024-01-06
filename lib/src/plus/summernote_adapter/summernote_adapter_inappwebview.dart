@@ -11,6 +11,7 @@ class SummernoteAdapterInappWebView extends SummernoteAdapter {
   SummernoteAdapterInappWebView({
     required super.key,
     super.summernoteSelector = "\$('#summernote-2')",
+    super.hint,
     super.resizeMode = ResizeMode.resizeToParent,
     super.enableOnBlur = false,
     super.enableOnFocus = false,

@@ -14,6 +14,9 @@ import '../editor_controller.dart';
 ///
 /// This is used for unsupported platforms.
 class HtmlEditor extends StatelessWidget {
+  /// {@macro HtmlEditorField.hint}
+  final String? hint;
+
   /// {@macro ResizeMode}
   final ResizeMode resizeMode;
 
@@ -62,6 +65,7 @@ class HtmlEditor extends StatelessWidget {
     this.onImageUploadError,
     this.onKeyup,
     this.onKeydown,
+    this.hint,
   });
 
   @override

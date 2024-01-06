@@ -11,6 +11,9 @@ import '../editor_controller.dart';
 ///
 /// This is used for mobile platforms.
 class HtmlEditor extends StatefulWidget {
+  /// {@macro HtmlEditorField.hint}
+  final String? hint;
+
   /// {@macro ResizeMode}
   final ResizeMode resizeMode;
 
@@ -57,6 +60,7 @@ class HtmlEditor extends StatefulWidget {
     this.onImageUploadError,
     this.onKeyup,
     this.onKeydown,
+    this.hint,
   });
 
   @override
@@ -90,6 +94,7 @@ class _HtmlEditorState extends State<HtmlEditor> {
   Widget build(BuildContext context) => HtmlEditorField(
         key: widget.key,
         controller: _controller,
+        hint: widget.hint,
         resizeMode: widget.resizeMode,
         themeData: _themeData,
         inAppWebViewSettings: widget.inAppWebViewSettings,

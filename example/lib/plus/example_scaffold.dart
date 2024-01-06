@@ -18,7 +18,7 @@ class _HtmlEditorPlusExampleState extends State<HtmlEditorPlusExample> {
   @override
   void initState() {
     super.initState();
-    _controller = HtmlEditorController(initialHtml: "Initial text")..addListener(_onHtmlChanged);
+    _controller = HtmlEditorController()..addListener(_onHtmlChanged);
   }
 
   @override
@@ -36,6 +36,7 @@ class _HtmlEditorPlusExampleState extends State<HtmlEditorPlusExample> {
             Expanded(
               child: HtmlEditor(
                 controller: _controller,
+                hint: "Your text here...",
                 onInit: () => print("Editor ready!"),
                 onFocus: () => print("Focus gained!"),
                 onBlur: () => print("Focus lost!"),
