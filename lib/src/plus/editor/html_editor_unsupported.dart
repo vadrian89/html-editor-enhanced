@@ -69,10 +69,11 @@ class HtmlEditor extends StatelessWidget {
 
   const HtmlEditor({
     super.key,
+    this.hint,
     this.resizeMode = ResizeMode.resizeToParent,
-    this.inAppWebViewSettings,
     this.controller,
     this.themeData,
+    this.inAppWebViewSettings,
     this.maximumFileSize,
     this.spellCheck,
     this.customOptions,
@@ -83,7 +84,6 @@ class HtmlEditor extends StatelessWidget {
     this.onImageUploadError,
     this.onKeyup,
     this.onKeydown,
-    this.hint,
     this.onMouseUp,
     this.onMouseDown,
   });
