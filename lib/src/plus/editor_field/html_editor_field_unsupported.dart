@@ -66,7 +66,9 @@ class HtmlEditorField extends StatelessWidget {
   /// The maximum file size allowed to be uploaded, in `bytes`.
   ///
   /// If not specified, the default value is 10MB.
-  /// Currently doesn't seem to do anything.
+  ///
+  /// IMPORTANT: Currently doesn't seem to do anything. Could be due to the version of summernote.
+  /// Hopefully, it will be fixed in the future.
   /// {@endtemplate}
   final int? maximumFileSize;
 

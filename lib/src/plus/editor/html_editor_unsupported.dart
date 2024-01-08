@@ -11,8 +11,6 @@ import '../editor_controller.dart';
 ///
 /// It contains the editor's text field where the user can insert the text, aswell as the toolbar.
 /// {@endtemplate}
-///
-/// This is used for unsupported platforms.
 class HtmlEditor extends StatelessWidget {
   /// {@macro HtmlEditorField.hint}
   final String? hint;
@@ -30,9 +28,6 @@ class HtmlEditor extends StatelessWidget {
 
   /// {@macro HtmlEditorField.inAppWebViewSettings}
   final InAppWebViewSettings? inAppWebViewSettings;
-
-  /// {@macro HtmlEditorField.maximumFileSize}
-  final int? maximumFileSize;
 
   /// {@macro HtmlEditorField.spellCheck}
   final bool? spellCheck;
@@ -74,7 +69,6 @@ class HtmlEditor extends StatelessWidget {
     this.controller,
     this.themeData,
     this.inAppWebViewSettings,
-    this.maximumFileSize,
     this.spellCheck,
     this.customOptions,
     this.onInit,

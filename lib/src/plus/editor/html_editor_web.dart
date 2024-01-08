@@ -22,9 +22,6 @@ class HtmlEditor extends StatefulWidget {
   /// {@macro HtmlEditorField.themeData}
   final ThemeData? themeData;
 
-  /// {@macro HtmlEditorField.maximumFileSize}
-  final int? maximumFileSize;
-
   /// {@macro HtmlEditorField.spellCheck}
   final bool? spellCheck;
 
@@ -63,7 +60,6 @@ class HtmlEditor extends StatefulWidget {
     this.resizeMode = ResizeMode.resizeToParent,
     this.controller,
     this.themeData,
-    this.maximumFileSize,
     this.spellCheck,
     this.customOptions,
     this.onInit,
@@ -112,7 +108,6 @@ class _HtmlEditorState extends State<HtmlEditor> {
         hint: widget.hint,
         resizeMode: widget.resizeMode,
         themeData: _themeData,
-        maximumFileSize: widget.maximumFileSize,
         spellCheck: widget.spellCheck,
         customOptions: widget.customOptions,
         onInit: widget.onInit,
