@@ -91,7 +91,9 @@ class HtmlEditorController extends ValueNotifier<HtmlEditorValue> {
   /// Toggle between the code view and the rich text view.
   void toggleCodeView() => sendEvent(const EditorToggleView());
 
-  /// Clears the editor of any text.
+  /// Clear the editor content and remove all stored history.
+  ///
+  /// It calls the `reset()` method of the editor.
   void clear() => sendEvent(const EditorReset());
 
   /// Reloads the editor.
