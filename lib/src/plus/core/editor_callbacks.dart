@@ -3,17 +3,31 @@ import 'editor_message.dart';
 /// The list of callbacks which can be used in the editor.
 enum EditorCallbacks implements Comparable<EditorCallbacks> {
   onInit(callback: "onInit"),
-  onChange(callback: "onChange"),
-  onChangeCodeview(callback: "onChangeCodeview"),
+  onChange(callback: "onChange", args: ["contents", "\$editable"], payload: "contents"),
+  onChangeCodeview(
+    callback: "onChangeCodeview",
+    args: ["contents", "\$editable"],
+    payload: "contents",
+  ),
   onFocus(callback: "onFocus"),
   onBlur(callback: "onBlur"),
-  onImageUpload(callback: "onImageUpload"),
-  onImageUploadError(callback: "onImageUploadError");
+  onImageUpload(callback: "onImageUpload", args: ["files"]),
+  onImageUploadError(callback: "onImageUploadError", args: ["file", "error"]),
+  onKeyup(callback: "onKeyup", args: ["e"], payload: "e.keyCode.toString()"),
+  onKeydown(callback: "onKeydown", args: ["e"], payload: "e.keyCode.toString()"),
+  onMouseUp(callback: "onMouseUp"),
+  onMouseDown(callback: "onMouseDown");
 
   /// The name of the event.
   final String callback;
 
-  const EditorCallbacks({required this.callback});
+  /// List of arguments received by the callback.
+  final List<String> args;
+
+  /// Payload of the called function.
+  final String? payload;
+
+  const EditorCallbacks({required this.callback, this.args = const [], this.payload});
 
   static EditorCallbacks? fromMessage(EditorMessage message) => find(message.method);
 

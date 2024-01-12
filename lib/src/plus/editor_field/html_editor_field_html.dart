@@ -21,6 +21,9 @@ import '../summernote_adapter/summernote_adapter.dart';
 ///
 /// This is used for web.
 class HtmlEditorField extends StatefulWidget {
+  /// {@macro HtmlEditorField.hint}
+  final String? hint;
+
   /// {@macro ResizeMode}
   final ResizeMode resizeMode;
 
@@ -29,6 +32,15 @@ class HtmlEditorField extends StatefulWidget {
 
   /// {@macro HtmlEditorField.themeData}
   final ThemeData? themeData;
+
+  /// {@macro HtmlEditorField.maximumFileSize}
+  final int? maximumFileSize;
+
+  /// {@macro HtmlEditorField.spellCheck}
+  final bool? spellCheck;
+
+  /// {@macro HtmlEditorField.customOptions}
+  final List<String>? customOptions;
 
   /// {@macro HtmlEditorField.onInit}
   final VoidCallback? onInit;
@@ -45,16 +57,36 @@ class HtmlEditorField extends StatefulWidget {
   /// {@macro HtmlEditorField.onImageUploadError}
   final ValueChanged<HtmlEditorUploadError>? onImageUploadError;
 
+  /// {@macro HtmlEditorField.onKeyup}
+  final ValueChanged<int>? onKeyup;
+
+  /// {@macro HtmlEditorField.onKeydown}
+  final ValueChanged<int>? onKeydown;
+
+  /// {@macro HtmlEditorField.onMouseUp}
+  final VoidCallback? onMouseUp;
+
+  /// {@macro HtmlEditorField.onMouseDown}
+  final VoidCallback? onMouseDown;
+
   const HtmlEditorField({
     super.key,
     required this.controller,
     this.resizeMode = ResizeMode.resizeToParent,
     this.themeData,
+    this.maximumFileSize,
+    this.spellCheck,
+    this.customOptions,
     this.onInit,
     this.onFocus,
     this.onBlur,
     this.onImageUpload,
     this.onImageUploadError,
+    this.onKeyup,
+    this.onKeydown,
+    this.hint,
+    this.onMouseUp,
+    this.onMouseDown,
   });
 
   @override
@@ -92,10 +124,18 @@ class _HtmlEditorFieldState extends State<HtmlEditorField> {
     _adapter = SummernoteAdapter.web(
       key: _viewId,
       resizeMode: widget.resizeMode,
+      hint: widget.hint,
+      customOptions: widget.customOptions,
+      spellCheck: widget.spellCheck,
+      maximumFileSize: widget.maximumFileSize,
       enableOnBlur: widget.onBlur != null,
       enableOnFocus: widget.onFocus != null,
       enableOnImageUpload: widget.onImageUpload != null,
       enableOnImageUploadError: widget.onImageUploadError != null,
+      enableOnKeyup: widget.onKeyup != null,
+      enableOnKeydown: widget.onKeydown != null,
+      enableOnMouseDown: widget.onMouseDown != null,
+      enableOnMouseUp: widget.onMouseUp != null,
     );
     _controller = widget.controller;
     _controller.addListener(_controllerListener);
@@ -104,11 +144,6 @@ class _HtmlEditorFieldState extends State<HtmlEditorField> {
     _messagesSubscription = _iframeMessagesStream.listen(_parseHandlerMessages);
     _iframe = _initIframe();
     _initFuture = _loadSummernote();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
   }
 
   @override
@@ -135,9 +170,7 @@ class _HtmlEditorFieldState extends State<HtmlEditorField> {
 
   Future<void> _loadSummernote() async {
     final summernoteInit = '''
-${_adapter.summernoteInit(
-      summernoteCallbacks: _adapter.summernoteCallbacks(),
-    )}
+${_adapter.init()}
 <style>
 ${_adapter.css(colorScheme: _themeData?.colorScheme)}
 </style>
@@ -165,6 +198,10 @@ ${_adapter.css(colorScheme: _themeData?.colorScheme)}
       EditorCallbacks.onImageUploadError => widget.onImageUploadError?.call(
           HtmlEditorUploadError.fromJson(message.payload!),
         ),
+      EditorCallbacks.onKeyup => widget.onKeyup?.call(int.parse(message.payload!)),
+      EditorCallbacks.onKeydown => widget.onKeydown?.call(int.parse(message.payload!)),
+      EditorCallbacks.onMouseDown => widget.onMouseDown?.call(),
+      EditorCallbacks.onMouseUp => widget.onMouseUp?.call(),
       _ => debugPrint("Uknown message received from iframe: $message"),
     };
   }
@@ -193,17 +230,20 @@ ${_adapter.css(colorScheme: _themeData?.colorScheme)}
     final message = EditorMessage.fromEvent(
       key: _viewId,
       event: event,
-      type: switch (event) {
+      type: _eventType(event),
+    );
+    html.window.postMessage(jsonEncoder.convert(message.toJson()), '*');
+  }
+
+  String _eventType(EditorEvent event) => switch (event) {
         EditorReload() => "toIframe",
         EditorSetHtml() => "toIframe",
         EditorSetCursorToEnd() => "toIframe",
         EditorCreateLink() => "toIframe",
         EditorInsertImageLink() => "toIframe",
+        EditorToggleView() => "toIframe",
         _ => "toSummernote",
-      },
-    );
-    html.window.postMessage(jsonEncoder.convert(message.toJson()), '*');
-  }
+      };
 
   html.IFrameElement _initIframe() {
     final iframe = html.IFrameElement();

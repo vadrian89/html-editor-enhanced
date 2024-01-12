@@ -22,17 +22,29 @@ import '../summernote_adapter/summernote_adapter.dart';
 ///
 /// This is used for mobile platforms.
 class HtmlEditorField extends StatefulWidget {
+  /// {@macro HtmlEditorField.hint}
+  final String? hint;
+
   /// {@macro ResizeMode}
   final ResizeMode resizeMode;
 
-  /// {@macro HtmlEditorField.intialMobileOptions}
-  final InAppWebViewSettings? intialMobileOptions;
+  /// {@macro HtmlEditorField.inAppWebViewSettings}
+  final InAppWebViewSettings? inAppWebViewSettings;
 
   /// {@macro HtmlEditorField.controller}
   final HtmlEditorController controller;
 
   /// {@macro HtmlEditorField.themeData}
   final ThemeData? themeData;
+
+  /// {@macro HtmlEditorField.maximumFileSize}
+  final int? maximumFileSize;
+
+  /// {@macro HtmlEditorField.spellCheck}
+  final bool? spellCheck;
+
+  /// {@macro HtmlEditorField.customOptions}
+  final List<String>? customOptions;
 
   /// {@macro HtmlEditorField.onInit}
   final VoidCallback? onInit;
@@ -49,17 +61,37 @@ class HtmlEditorField extends StatefulWidget {
   /// {@macro HtmlEditorField.onImageUploadError}
   final ValueChanged<HtmlEditorUploadError>? onImageUploadError;
 
+  /// {@macro HtmlEditorField.onKeyup}
+  final ValueChanged<int>? onKeyup;
+
+  /// {@macro HtmlEditorField.onKeydown}
+  final ValueChanged<int>? onKeydown;
+
+  /// {@macro HtmlEditorField.onMouseUp}
+  final VoidCallback? onMouseUp;
+
+  /// {@macro HtmlEditorField.onMouseDown}
+  final VoidCallback? onMouseDown;
+
   const HtmlEditorField({
     super.key,
     required this.controller,
     this.resizeMode = ResizeMode.resizeToParent,
-    this.intialMobileOptions,
+    this.inAppWebViewSettings,
     this.themeData,
+    this.maximumFileSize,
+    this.spellCheck,
+    this.customOptions,
     this.onInit,
     this.onFocus,
     this.onBlur,
     this.onImageUpload,
     this.onImageUploadError,
+    this.onKeyup,
+    this.onKeydown,
+    this.hint,
+    this.onMouseUp,
+    this.onMouseDown,
   });
 
   @override
@@ -97,16 +129,24 @@ class _HtmlEditorFieldState extends State<HtmlEditorField> {
     _adapter = SummernoteAdapter.inAppWebView(
       key: _viewId,
       resizeMode: widget.resizeMode,
+      hint: widget.hint,
+      customOptions: widget.customOptions,
+      spellCheck: widget.spellCheck,
+      maximumFileSize: widget.maximumFileSize,
       enableOnBlur: widget.onBlur != null,
       enableOnFocus: widget.onFocus != null,
       enableOnImageUpload: widget.onImageUpload != null,
       enableOnImageUploadError: widget.onImageUploadError != null,
+      enableOnKeydown: widget.onKeydown != null,
+      enableOnKeyup: widget.onKeyup != null,
+      enableOnMouseUp: widget.onMouseUp != null,
+      enableOnMouseDown: widget.onMouseDown != null,
     );
     _controller = widget.controller;
     _controller.addListener(_controllerListener);
     _currentValueNotifier = ValueNotifier(_controller.clonedValue);
     _eventsSubscription = _controller.events.listen(_parseEvents);
-    _initialOptions = widget.intialMobileOptions ??
+    _initialOptions = widget.inAppWebViewSettings ??
         InAppWebViewSettings(
           javaScriptEnabled: true,
           transparentBackground: true,
@@ -117,11 +157,6 @@ class _HtmlEditorFieldState extends State<HtmlEditorField> {
     _keyboardVisibilitySubscription = _keyboardVisibilityStream.listen(
       _onKeyboardVisibilityChanged,
     );
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
   }
 
   @override
@@ -175,11 +210,7 @@ class _HtmlEditorFieldState extends State<HtmlEditorField> {
     );
     await _webviewController!.injectJavascriptFileFromAsset(assetFilePath: _jqueryPath);
     await _webviewController!.injectJavascriptFileFromAsset(assetFilePath: _summernotePath);
-    await _webviewController!.evaluateJavascript(
-      source: _adapter.summernoteInit(
-        summernoteCallbacks: _adapter.summernoteCallbacks(),
-      ),
-    );
+    await _webviewController!.evaluateJavascript(source: _adapter.init());
   }
 
   void _parseHandlerMessages(EditorMessage message) {
@@ -196,6 +227,10 @@ class _HtmlEditorFieldState extends State<HtmlEditorField> {
       EditorCallbacks.onImageUploadError => widget.onImageUploadError?.call(
           HtmlEditorUploadError.fromJson(message.payload!),
         ),
+      EditorCallbacks.onKeyup => widget.onKeyup?.call(int.parse(message.payload!)),
+      EditorCallbacks.onKeydown => widget.onKeydown?.call(int.parse(message.payload!)),
+      EditorCallbacks.onMouseUp => widget.onMouseUp?.call(),
+      EditorCallbacks.onMouseDown => widget.onMouseDown?.call(),
       _ => debugPrint("Uknown message received from editor: $message"),
     };
   }
@@ -221,9 +256,9 @@ class _HtmlEditorFieldState extends State<HtmlEditorField> {
     }
   }
 
-  void _parseEvents(EditorEvent event) {
+  Object? _parseEvents(EditorEvent event) {
     debugPrint("Sending message to editor: $event");
-    (switch (event) {
+    return switch (event) {
       EditorReload() => _webviewController!.reload(),
       EditorClearFocus() => SystemChannels.textInput.invokeMethod('TextInput.hide'),
       EditorCallFunction(:final method, :final payload) => _adapter.javascriptFunction(
@@ -235,6 +270,7 @@ class _HtmlEditorFieldState extends State<HtmlEditorField> {
             EditorSetHtml(:final method, :final payload) => "$method(${jsonEncode(payload)});",
             EditorResizeToParent(:final method) => "$method();",
             EditorSetCursorToEnd(:final method) => "$method();",
+            EditorToggleView(:final method) => "$method();",
             EditorInsertImageLink(:final method, :final payload) =>
               "$method(${jsonEncode(payload)});",
             _ => _adapter.callSummernoteMethod(
@@ -246,14 +282,8 @@ class _HtmlEditorFieldState extends State<HtmlEditorField> {
               ),
           },
         ),
-    });
-    _triggerExtraEvent(event);
+    };
   }
-
-  void _triggerExtraEvent(EditorEvent event) => switch (event) {
-        EditorToggleView() => _parseEvents(const EditorResizeToParent()),
-        _ => null,
-      };
 
   /// Function which clears the focus from the editor once the keyboard is hidden.
   ///

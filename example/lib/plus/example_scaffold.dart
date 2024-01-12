@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:html_editor_plus/html_editor_plus.dart';
+import 'package:html_editor_plus/editor_plus.dart';
 import 'package:html_editor_plus_example/plus/core/control_button.dart';
 import 'package:html_editor_plus_example/plus/core/controls.dart';
 
@@ -18,11 +18,12 @@ class _HtmlEditorPlusExampleState extends State<HtmlEditorPlusExample> {
   @override
   void initState() {
     super.initState();
-    _controller = HtmlEditorController(initialHtml: "Initial text");
+    _controller = HtmlEditorController()..addListener(_onHtmlChanged);
   }
 
   @override
   void dispose() {
+    _controller.removeListener(_onHtmlChanged);
     _controller.dispose();
     super.dispose();
   }
@@ -35,11 +36,16 @@ class _HtmlEditorPlusExampleState extends State<HtmlEditorPlusExample> {
             Expanded(
               child: HtmlEditor(
                 controller: _controller,
+                hint: "Your text here...",
                 onInit: () => print("Editor ready!"),
                 onFocus: () => print("Focus gained!"),
                 onBlur: () => print("Focus lost!"),
                 onImageUpload: (value) => print("Image uploaded: $value"),
                 onImageUploadError: (value) => print("Image upload failed with error: $value"),
+                onKeyup: (value) => print("Key up event: $value"),
+                onKeydown: (value) => print("Key down event: $value"),
+                onMouseUp: () => print("Mouse up!"),
+                onMouseDown: () => print("Mouse down!"),
               ),
             ),
             EditorControls(
@@ -130,4 +136,9 @@ class _HtmlEditorPlusExampleState extends State<HtmlEditorPlusExample> {
           ),
         ],
       );
+
+  void _onHtmlChanged() {
+    print("Current HTML value: ${_controller.html}");
+    print("Current character count: ${_controller.characterCount}");
+  }
 }

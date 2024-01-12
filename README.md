@@ -3,10 +3,12 @@
 
 Flutter HTML Editor Plus is a text editor for Android, iOS, and Web to help write WYSIWYG HTML code with the Summernote JavaScript wrapper.
 
-Original html_editor_plus by [tneotia](https://github.com/tneotia) - [repo link](https://github.com/tneotia/html-editor-enhanced). 
-This library is a fork of his repo.
+This is a fork from [html-editor-enhanced](https://github.com/tneotia/html-editor-enhanced). 
+A big thanks for [tneotia](https://github.com/tneotia), for keeping the project alive.
 
-I have removed documentation from this page as most of it will be inside the code itself. In the meantime you can read it in the original repo.
+
+I have removed documentation and will updated with the new API in time.  
+In the meantime you can read it in the original repo.
 
 Main goals of this package is to:  
 - Keep the package updated to latest stable versions of Flutter and dependencies (Summernote editor included).
@@ -39,7 +41,8 @@ import 'package:html_editor/html_editor.dart';
 
 HtmlEditorController controller = HtmlEditorController();
 
-@override Widget build(BuildContext context) {
+@override 
+Widget build(BuildContext context) {
     return HtmlEditor(
         controller: controller, //required
         htmlEditorOptions: HtmlEditorOptions(
@@ -66,6 +69,30 @@ Follow https://github.com/flutter/flutter/issues/80524 for updates on a potentia
 For the full API reference, see [here](https://pub.dev/documentation/html_editor_plus/latest/).
 
 For a full example, see [here](https://github.com/vadrian89/html-editor-plus/tree/master/example).
+
+## PLUS version
+
+The PLUS version is the current package re-written using current Flutter version, standard and patterns.  
+While some similiarities will remain, most of the API will be different.  
+
+**Keep in mind that the new version is WORK IN PROGRESS. This means that the breaking changes will most likely occur on every release!**
+
+## Some noteable changes in the new API (WIP)
+
+### HtmlEditorController
+Is implemented similar to other Flutter controllers, meaning it extends `ValueNotifier` and the value will be stored into a `HtmlEditorValue`.  
+
+Side effects of this change:
+- If initialised, the controller, will require manual disposal through `dispose()` method;  
+- Listeners can be attached to the controller to react when the value has changed;  
+- The value can be used with [ValueListenableBuilder](https://api.flutter.dev/flutter/widgets/ValueListenableBuilder-class.html).  
+- Some methods have been renamed, and method signatures have changed to use named parameters. 
+- `onChange` callback is no longer needed, because listeners can be attached to the controller and/or value. 
+
+### Other changes
+Features removed:
+- Developers will not have access to **InAppWebViewController**, because the editor means to be a common interface for different platforms. As such it makes no sense to expose the controller for mobile. At least not in the current phase.   
+- Editor notifications will not be implemented. The editor should be exactly that, a HTML RICH text editor which outputs the text as a HTML string. Notifications should be implemented, separately, through Flutter.  
 
 ## License
 

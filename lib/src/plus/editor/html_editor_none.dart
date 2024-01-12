@@ -11,9 +11,10 @@ import '../editor_controller.dart';
 ///
 /// It contains the editor's text field where the user can insert the text, aswell as the toolbar.
 /// {@endtemplate}
-///
-/// This is used for unsupported platforms.
 class HtmlEditor extends StatelessWidget {
+  /// {@macro HtmlEditorField.hint}
+  final String? hint;
+
   /// {@macro ResizeMode}
   final ResizeMode resizeMode;
 
@@ -25,8 +26,14 @@ class HtmlEditor extends StatelessWidget {
   /// If not specified, the default theme data is used, provided from Theme.of(context).
   final ThemeData? themeData;
 
-  /// {@macro HtmlEditorField.intialMobileOptions}
-  final InAppWebViewSettings? intialMobileOptions;
+  /// {@macro HtmlEditorField.inAppWebViewSettings}
+  final InAppWebViewSettings? inAppWebViewSettings;
+
+  /// {@macro HtmlEditorField.spellCheck}
+  final bool? spellCheck;
+
+  /// {@macro HtmlEditorField.customOptions}
+  final List<String>? customOptions;
 
   /// {@macro HtmlEditorField.onInit}
   final VoidCallback? onInit;
@@ -43,17 +50,36 @@ class HtmlEditor extends StatelessWidget {
   /// {@macro HtmlEditorField.onImageUploadError}
   final ValueChanged<HtmlEditorUploadError>? onImageUploadError;
 
+  /// {@macro HtmlEditorField.onKeyup}
+  final ValueChanged<int>? onKeyup;
+
+  /// {@macro HtmlEditorField.onKeydown}
+  final ValueChanged<int>? onKeydown;
+
+  /// {@macro HtmlEditorField.onMouseUp}
+  final VoidCallback? onMouseUp;
+
+  /// {@macro HtmlEditorField.onMouseDown}
+  final VoidCallback? onMouseDown;
+
   const HtmlEditor({
     super.key,
+    this.hint,
     this.resizeMode = ResizeMode.resizeToParent,
-    this.intialMobileOptions,
     this.controller,
     this.themeData,
+    this.inAppWebViewSettings,
+    this.spellCheck,
+    this.customOptions,
     this.onInit,
     this.onFocus,
     this.onBlur,
     this.onImageUpload,
     this.onImageUploadError,
+    this.onKeyup,
+    this.onKeydown,
+    this.onMouseUp,
+    this.onMouseDown,
   });
 
   @override
