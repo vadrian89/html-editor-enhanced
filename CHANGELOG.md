@@ -1,4 +1,4 @@
-## [0.0.3] = 
+## [0.0.3] = 2024-01-12
 * Fixed exception with scrollbar on web.
 * Added more features, from original editor, to plus version.
 * Renamed platform specific files from mobile/web to io/html to better represent when they are actually imported.
