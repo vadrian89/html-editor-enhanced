@@ -55,6 +55,9 @@ class HtmlEditor extends StatefulWidget {
   /// {@macro HtmlEditorField.onMouseDown}
   final VoidCallback? onMouseDown;
 
+  /// {@macro HtmlEditorField.onChange}
+  final ValueChanged<String>? onChange;
+
   const HtmlEditor({
     super.key,
     this.resizeMode = ResizeMode.resizeToParent,
@@ -72,6 +75,7 @@ class HtmlEditor extends StatefulWidget {
     this.hint,
     this.onMouseUp,
     this.onMouseDown,
+    this.onChange,
   });
 
   @override
@@ -119,5 +123,6 @@ class _HtmlEditorState extends State<HtmlEditor> {
         onKeydown: widget.onKeydown,
         onMouseUp: widget.onMouseUp,
         onMouseDown: widget.onMouseDown,
+        onChange: widget.onChange,
       );
 }

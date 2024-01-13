@@ -1,3 +1,6 @@
+## [0.0.4] =
+* Added onChange callback
+
 ## [0.0.3] = 2024-01-12
 * Fixed exception with scrollbar on web.
 * Added more features, from original editor, to plus version.

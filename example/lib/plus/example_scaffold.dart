@@ -46,6 +46,7 @@ class _HtmlEditorPlusExampleState extends State<HtmlEditorPlusExample> {
                 onKeydown: (value) => print("Key down event: $value"),
                 onMouseUp: () => print("Mouse up!"),
                 onMouseDown: () => print("Mouse down!"),
+                onChange: (value) => print("Value changed: $value"),
               ),
             ),
             EditorControls(
@@ -138,7 +139,7 @@ class _HtmlEditorPlusExampleState extends State<HtmlEditorPlusExample> {
       );
 
   void _onHtmlChanged() {
-    print("Current HTML value: ${_controller.html}");
-    print("Current character count: ${_controller.characterCount}");
+    print("Controller HTML value: ${_controller.html}");
+    print("Controller character count: ${_controller.characterCount}");
   }
 }

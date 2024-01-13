@@ -9,8 +9,6 @@ import '../editor_controller.dart';
 /// {@template HtmlEditorField}
 /// The widget representing the editor's text field where the user can insert the text.
 /// {@endtemplate}
-///
-/// This is used for unsupported platforms.
 class HtmlEditorField extends StatelessWidget {
   /// {@template HtmlEditorField.hint}
   /// The hint to display when the editor is empty.
@@ -137,6 +135,11 @@ class HtmlEditorField extends StatelessWidget {
   /// {@endtemplate}
   final VoidCallback? onMouseDown;
 
+  /// {@template HtmlEditorField.onChange}
+  /// Callback to be called when the user changes the text in the editor.
+  /// {@endtemplate}
+  final ValueChanged<String>? onChange;
+
   const HtmlEditorField({
     super.key,
     required this.controller,
@@ -156,6 +159,7 @@ class HtmlEditorField extends StatelessWidget {
     this.hint,
     this.onMouseUp,
     this.onMouseDown,
+    this.onChange,
   });
 
   @override

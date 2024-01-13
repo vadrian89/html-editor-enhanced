@@ -87,7 +87,6 @@ Side effects of this change:
 - Listeners can be attached to the controller to react when the value has changed;  
 - The value can be used with [ValueListenableBuilder](https://api.flutter.dev/flutter/widgets/ValueListenableBuilder-class.html).  
 - Some methods have been renamed, and method signatures have changed to use named parameters. 
-- `onChange` callback is no longer needed, because listeners can be attached to the controller and/or value. 
 
 ### Other changes
 Features removed:

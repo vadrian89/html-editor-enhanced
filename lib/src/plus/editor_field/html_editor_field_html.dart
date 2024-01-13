@@ -69,6 +69,9 @@ class HtmlEditorField extends StatefulWidget {
   /// {@macro HtmlEditorField.onMouseDown}
   final VoidCallback? onMouseDown;
 
+  /// {@macro HtmlEditorField.onChange}
+  final ValueChanged<String>? onChange;
+
   const HtmlEditorField({
     super.key,
     required this.controller,
@@ -87,6 +90,7 @@ class HtmlEditorField extends StatefulWidget {
     this.hint,
     this.onMouseUp,
     this.onMouseDown,
+    this.onChange,
   });
 
   @override
@@ -213,6 +217,7 @@ ${_adapter.css(colorScheme: _themeData?.colorScheme)}
 
   void _onChange(EditorMessage message) {
     if (message.payload != _currentValue.html) {
+      widget.onChange?.call(message.payload!);
       _currentValueNotifier.value = _currentValue.copyWith(html: message.payload);
       _controller.html = message.payload!;
     }

@@ -62,6 +62,9 @@ class HtmlEditor extends StatelessWidget {
   /// {@macro HtmlEditorField.onMouseDown}
   final VoidCallback? onMouseDown;
 
+  /// {@macro HtmlEditorField.onChange}
+  final ValueChanged<String>? onChange;
+
   const HtmlEditor({
     super.key,
     this.hint,
@@ -80,6 +83,7 @@ class HtmlEditor extends StatelessWidget {
     this.onKeydown,
     this.onMouseUp,
     this.onMouseDown,
+    this.onChange,
   });
 
   @override
