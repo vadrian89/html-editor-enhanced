@@ -1,5 +1,8 @@
 ## [0.0.4] =
-* Added onChange callback
+* Added onChange callback.
+* Fixed issue with Summernote icons not loading.
+* Added allowUrlLoading field to plus version.
+* Added onUrlPressed callback to plus version.
 
 ## [0.0.3] = 2024-01-12
 * Fixed exception with scrollbar on web.
