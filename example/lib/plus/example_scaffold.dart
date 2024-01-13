@@ -37,6 +37,10 @@ class _HtmlEditorPlusExampleState extends State<HtmlEditorPlusExample> {
               child: HtmlEditor(
                 controller: _controller,
                 hint: "Your text here...",
+                allowUrlLoading: (uri) async {
+                  print("allowUrlLoading called with uri: $uri");
+                  return false;
+                },
                 onInit: () => print("Editor ready!"),
                 onFocus: () => print("Focus gained!"),
                 onBlur: () => print("Focus lost!"),
@@ -47,6 +51,7 @@ class _HtmlEditorPlusExampleState extends State<HtmlEditorPlusExample> {
                 onMouseUp: () => print("Mouse up!"),
                 onMouseDown: () => print("Mouse down!"),
                 onChange: (value) => print("Value changed: $value"),
+                onUrlPressed: (value) => print("URL pressed: $value"),
               ),
             ),
             EditorControls(

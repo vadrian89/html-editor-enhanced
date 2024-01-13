@@ -16,7 +16,8 @@ enum EditorCallbacks implements Comparable<EditorCallbacks> {
   onKeyup(callback: "onKeyup", args: ["e"], payload: "e.keyCode.toString()"),
   onKeydown(callback: "onKeydown", args: ["e"], payload: "e.keyCode.toString()"),
   onMouseUp(callback: "onMouseUp"),
-  onMouseDown(callback: "onMouseDown");
+  onMouseDown(callback: "onMouseDown"),
+  onUrlPressed(callback: "onUrlPressed");
 
   /// The name of the event.
   final String callback;

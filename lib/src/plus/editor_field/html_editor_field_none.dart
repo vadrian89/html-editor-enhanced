@@ -90,6 +90,23 @@ class HtmlEditorField extends StatelessWidget {
   /// {@endtemplate}
   final List<String>? customOptions;
 
+  /// {@template HtmlEditorField.allowUrlLoading}
+  /// If the editor should allow the default behavior for `url` handling when the user clicks/taps
+  /// on one.
+  ///
+  /// It provides a [Uri] so the developer can check what url was pressed.
+  ///
+  /// For Android, iOS, macOS it calls [InAppWebView.shouldOverrideUrlLoading] to provide the [Uri].
+  /// For web, due to limitations, this method is called only when the editor is loaded and the
+  /// `uri` value is `null`.
+  ///
+  /// If you need to get the url pressed by the user, use [onUrlPressed]. That callback is called
+  /// on all platforms when the user taps/clicks a url.
+  ///
+  /// If not implemented, the default behavior is left to the platform.
+  /// {@endtemplate}
+  final Future<bool> Function(Uri? uri)? allowUrlLoading;
+
   /// {@template HtmlEditorField.onInit}
   /// Callback to be called when the editor is initialized.
   /// {@endtemplate}
@@ -140,6 +157,13 @@ class HtmlEditorField extends StatelessWidget {
   /// {@endtemplate}
   final ValueChanged<String>? onChange;
 
+  /// {@template HtmlEditorField.onUrlPressed}
+  /// Callback to be called when the taps/clicks a url inside the editor.
+  ///
+  /// Only when the user taps/clicks an `<a>` tag.
+  /// {@endtemplate}
+  final ValueChanged<String>? onUrlPressed;
+
   const HtmlEditorField({
     super.key,
     required this.controller,
@@ -149,6 +173,7 @@ class HtmlEditorField extends StatelessWidget {
     this.maximumFileSize,
     this.spellCheck,
     this.customOptions,
+    this.allowUrlLoading,
     this.onInit,
     this.onFocus,
     this.onBlur,
@@ -160,6 +185,7 @@ class HtmlEditorField extends StatelessWidget {
     this.onMouseUp,
     this.onMouseDown,
     this.onChange,
+    this.onUrlPressed,
   });
 
   @override

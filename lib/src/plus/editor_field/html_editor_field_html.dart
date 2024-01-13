@@ -42,6 +42,9 @@ class HtmlEditorField extends StatefulWidget {
   /// {@macro HtmlEditorField.customOptions}
   final List<String>? customOptions;
 
+  /// {@macro HtmlEditorField.allowUrlLoading}
+  final Future<bool> Function(Uri? uri)? allowUrlLoading;
+
   /// {@macro HtmlEditorField.onInit}
   final VoidCallback? onInit;
 
@@ -72,6 +75,9 @@ class HtmlEditorField extends StatefulWidget {
   /// {@macro HtmlEditorField.onChange}
   final ValueChanged<String>? onChange;
 
+  /// {@macro HtmlEditorField.onUrlPressed}
+  final ValueChanged<String>? onUrlPressed;
+
   const HtmlEditorField({
     super.key,
     required this.controller,
@@ -80,6 +86,7 @@ class HtmlEditorField extends StatefulWidget {
     this.maximumFileSize,
     this.spellCheck,
     this.customOptions,
+    this.allowUrlLoading,
     this.onInit,
     this.onFocus,
     this.onBlur,
@@ -91,6 +98,7 @@ class HtmlEditorField extends StatefulWidget {
     this.onMouseUp,
     this.onMouseDown,
     this.onChange,
+    this.onUrlPressed,
   });
 
   @override
@@ -140,6 +148,7 @@ class _HtmlEditorFieldState extends State<HtmlEditorField> {
       enableOnKeydown: widget.onKeydown != null,
       enableOnMouseDown: widget.onMouseDown != null,
       enableOnMouseUp: widget.onMouseUp != null,
+      enableOnUrlPressed: widget.onUrlPressed != null,
     );
     _controller = widget.controller;
     _controller.addListener(_controllerListener);
@@ -173,8 +182,9 @@ class _HtmlEditorFieldState extends State<HtmlEditorField> {
       );
 
   Future<void> _loadSummernote() async {
+    final allowUrlLoading = (await widget.allowUrlLoading?.call(null)) ?? true;
     final summernoteInit = '''
-${_adapter.init()}
+${_adapter.init(allowUrlLoading: allowUrlLoading)}
 <style>
 ${_adapter.css(colorScheme: _themeData?.colorScheme)}
 </style>
@@ -206,6 +216,7 @@ ${_adapter.css(colorScheme: _themeData?.colorScheme)}
       EditorCallbacks.onKeydown => widget.onKeydown?.call(int.parse(message.payload!)),
       EditorCallbacks.onMouseDown => widget.onMouseDown?.call(),
       EditorCallbacks.onMouseUp => widget.onMouseUp?.call(),
+      EditorCallbacks.onUrlPressed => widget.onUrlPressed?.call(message.payload!),
       _ => debugPrint("Uknown message received from iframe: $message"),
     };
   }

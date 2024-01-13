@@ -32,6 +32,9 @@ class HtmlEditor extends StatefulWidget {
   /// {@macro HtmlEditorField.customOptions}
   final List<String>? customOptions;
 
+  /// {@macro HtmlEditorField.allowUrlLoading}
+  final Future<bool> Function(Uri? uri)? allowUrlLoading;
+
   /// {@macro HtmlEditorField.onInit}
   final VoidCallback? onInit;
 
@@ -62,6 +65,9 @@ class HtmlEditor extends StatefulWidget {
   /// {@macro HtmlEditorField.onChange}
   final ValueChanged<String>? onChange;
 
+  /// {@macro HtmlEditorField.onUrlPressed}
+  final ValueChanged<String>? onUrlPressed;
+
   const HtmlEditor({
     super.key,
     this.resizeMode = ResizeMode.resizeToParent,
@@ -70,6 +76,7 @@ class HtmlEditor extends StatefulWidget {
     this.themeData,
     this.spellCheck,
     this.customOptions,
+    this.allowUrlLoading,
     this.onInit,
     this.onFocus,
     this.onBlur,
@@ -81,6 +88,7 @@ class HtmlEditor extends StatefulWidget {
     this.onMouseUp,
     this.onMouseDown,
     this.onChange,
+    this.onUrlPressed,
   });
 
   @override
@@ -120,6 +128,7 @@ class _HtmlEditorState extends State<HtmlEditor> {
         inAppWebViewSettings: widget.inAppWebViewSettings,
         spellCheck: widget.spellCheck,
         customOptions: widget.customOptions,
+        allowUrlLoading: widget.allowUrlLoading,
         onInit: widget.onInit,
         onFocus: widget.onFocus,
         onBlur: widget.onBlur,
@@ -130,5 +139,6 @@ class _HtmlEditorState extends State<HtmlEditor> {
         onMouseUp: widget.onMouseUp,
         onMouseDown: widget.onMouseDown,
         onChange: widget.onChange,
+        onUrlPressed: widget.onUrlPressed,
       );
 }

@@ -46,6 +46,9 @@ class HtmlEditorField extends StatefulWidget {
   /// {@macro HtmlEditorField.customOptions}
   final List<String>? customOptions;
 
+  /// {@macro HtmlEditorField.allowUrlLoading}
+  final Future<bool> Function(Uri? uri)? allowUrlLoading;
+
   /// {@macro HtmlEditorField.onInit}
   final VoidCallback? onInit;
 
@@ -76,6 +79,9 @@ class HtmlEditorField extends StatefulWidget {
   /// {@macro HtmlEditorField.onChange}
   final ValueChanged<String>? onChange;
 
+  /// {@macro HtmlEditorField.onUrlPressed}
+  final ValueChanged<String>? onUrlPressed;
+
   const HtmlEditorField({
     super.key,
     required this.controller,
@@ -85,6 +91,7 @@ class HtmlEditorField extends StatefulWidget {
     this.maximumFileSize,
     this.spellCheck,
     this.customOptions,
+    this.allowUrlLoading,
     this.onInit,
     this.onFocus,
     this.onBlur,
@@ -96,6 +103,7 @@ class HtmlEditorField extends StatefulWidget {
     this.onMouseUp,
     this.onMouseDown,
     this.onChange,
+    this.onUrlPressed,
   });
 
   @override
@@ -145,6 +153,7 @@ class _HtmlEditorFieldState extends State<HtmlEditorField> {
       enableOnKeyup: widget.onKeyup != null,
       enableOnMouseUp: widget.onMouseUp != null,
       enableOnMouseDown: widget.onMouseDown != null,
+      enableOnUrlPressed: widget.onUrlPressed != null,
     );
     _controller = widget.controller;
     _controller.addListener(_controllerListener);
@@ -186,12 +195,14 @@ class _HtmlEditorFieldState extends State<HtmlEditorField> {
         ),
         initialSettings: _initialOptions,
         shouldOverrideUrlLoading: (controller, action) async {
-          /// TODO; implement
-          /// if (!action.request.url.toString().contains(_filePath)) {
-          ///   return (await widget.callbacks?.onNavigationRequestMobile
-          ///           ?.call(action.request.url.toString())) as NavigationActionPolicy? ??
-          ///       NavigationActionPolicy.ALLOW;
-          /// }
+          if (action.request.url.toString().contains(_filePath)) {
+            return NavigationActionPolicy.ALLOW;
+          }
+          if (widget.allowUrlLoading != null) {
+            return (await widget.allowUrlLoading!(action.request.url))
+                ? NavigationActionPolicy.ALLOW
+                : NavigationActionPolicy.CANCEL;
+          }
           return NavigationActionPolicy.ALLOW;
         },
         gestureRecognizers: {
@@ -235,6 +246,7 @@ class _HtmlEditorFieldState extends State<HtmlEditorField> {
       EditorCallbacks.onKeydown => widget.onKeydown?.call(int.parse(message.payload!)),
       EditorCallbacks.onMouseUp => widget.onMouseUp?.call(),
       EditorCallbacks.onMouseDown => widget.onMouseDown?.call(),
+      EditorCallbacks.onUrlPressed => widget.onUrlPressed?.call(message.payload!),
       _ => debugPrint("Uknown message received from editor: $message"),
     };
   }

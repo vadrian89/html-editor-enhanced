@@ -69,6 +69,9 @@ abstract class SummernoteAdapter {
   /// If the [EditorCallbacks.onMouseDown] should be enabled.
   final bool enableOnMouseDown;
 
+  /// If the [EditorCallbacks.onUrlPressed] should be enabled.
+  final bool enableOnUrlPressed;
+
   /// Build string for [EditorCallbacks.onInit] callback.
   String get onInitCallback => summernoteCallback(event: EditorCallbacks.onInit);
 
@@ -107,14 +110,14 @@ abstract class SummernoteAdapter {
   String get onKeydownCallback => summernoteCallback(event: EditorCallbacks.onKeydown);
 
   /// Build string for [EditorCallbacks.onMouseUp] callback.
-  String get onMouseUpCallback => jqueryOnEventHandler(
+  String get onMouseUpCallback => jQueryOnEventHandler(
         selector: summernoteSelector,
         event: "summernote.mouseup",
         body: messageHandler(event: EditorCallbacks.onMouseUp),
       );
 
   /// Build string for [EditorCallbacks.onMouseDown] callback.
-  String get onMouseDownCallback => jqueryOnEventHandler(
+  String get onMouseDownCallback => jQueryOnEventHandler(
         selector: summernoteSelector,
         event: "summernote.mousedown",
         body: messageHandler(event: EditorCallbacks.onMouseDown),
@@ -193,6 +196,7 @@ abstract class SummernoteAdapter {
     this.enableOnKeydown = false,
     this.enableOnMouseUp = false,
     this.enableOnMouseDown = false,
+    this.enableOnUrlPressed = false,
   });
 
   factory SummernoteAdapter.web({
@@ -211,6 +215,7 @@ abstract class SummernoteAdapter {
     bool enableOnKeydown = false,
     bool enableOnMouseUp = false,
     bool enableOnMouseDown = false,
+    bool enableOnUrlPressed = false,
   }) =>
       SummernoteAdapterWeb(
         key: key,
@@ -227,6 +232,8 @@ abstract class SummernoteAdapter {
         enableOnKeyup: enableOnKeyup,
         enableOnKeydown: enableOnKeydown,
         enableOnMouseUp: enableOnMouseUp,
+        enableOnMouseDown: enableOnMouseDown,
+        enableOnUrlPressed: enableOnUrlPressed,
       );
 
   factory SummernoteAdapter.inAppWebView({
@@ -245,6 +252,7 @@ abstract class SummernoteAdapter {
     bool enableOnKeydown = false,
     bool enableOnMouseUp = false,
     bool enableOnMouseDown = false,
+    bool enableOnUrlPressed = false,
   }) =>
       SummernoteAdapterInappWebView(
         key: key,
@@ -262,12 +270,11 @@ abstract class SummernoteAdapter {
         enableOnKeydown: enableOnKeydown,
         enableOnMouseUp: enableOnMouseUp,
         enableOnMouseDown: enableOnMouseDown,
+        enableOnUrlPressed: enableOnUrlPressed,
       );
 
   /// Build a string which is used to initialise all the web code.
-  String init() => '''
-
-console.log("Maximum file size allowed: " + $maximumFileSize);
+  String init({bool allowUrlLoading = true}) => '''
 function toggleCodeView() {
   ${callSummernoteMethod(method: 'codeview.toggle')}
   if (${resizeMode == ResizeMode.resizeToParent}) {
@@ -381,6 +388,8 @@ if (${resizeMode == ResizeMode.resizeToParent}) {
   resizeToParent();
   addEventListener("resize", (event) => resizeToParent());
 }
+
+${onLinkPressedListener(allowUrlLoading: allowUrlLoading)}
 
 logDebug("Summernote initialised");
 ''';
@@ -516,7 +525,7 @@ logDebug("Summernote initialised");
   /// Build a jQuery handler for different type of events.
   ///
   /// [selector] is a jQuery selector for the element to which the event is attached.
-  String jqueryOnEventHandler({
+  String jQueryOnEventHandler({
     required String selector,
     required String event,
     List<String> args = const [],
@@ -548,4 +557,18 @@ logDebug("Summernote initialised");
       ${hasBase64 ? "'base64': base64," : ""}
     };
   ''';
+
+  /// Javascript listener to handle link taps/clicks.
+  String onLinkPressedListener({bool allowUrlLoading = true}) => """
+document.addEventListener("click", function(event) {
+    const target = event.target;
+    if (target.tagName.toLowerCase() === "a") {
+      if (${!allowUrlLoading}) {
+        event.preventDefault();
+      }
+      const url = target.getAttribute("href");
+      ${enableOnUrlPressed ? messageHandler(event: EditorCallbacks.onUrlPressed, payload: "url") : ""}
+    }
+});
+""";
 }

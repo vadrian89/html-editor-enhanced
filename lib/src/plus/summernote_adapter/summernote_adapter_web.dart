@@ -74,14 +74,15 @@ window.parent.addEventListener('message', handleMessage, false);
     super.enableOnKeydown = false,
     super.enableOnMouseUp = false,
     super.enableOnMouseDown = false,
+    super.enableOnUrlPressed = false,
   });
 
   @override
-  String init() {
+  String init({bool allowUrlLoading = true}) {
     return '''
 <script type="text/javascript">
 \$(document).ready(function () {
-  ${super.init()}
+  ${super.init(allowUrlLoading: allowUrlLoading)}
 });
 </script> 
 ''';

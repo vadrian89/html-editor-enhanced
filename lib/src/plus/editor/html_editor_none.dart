@@ -35,6 +35,9 @@ class HtmlEditor extends StatelessWidget {
   /// {@macro HtmlEditorField.customOptions}
   final List<String>? customOptions;
 
+  /// {@macro HtmlEditorField.allowUrlLoading}
+  final Future<bool> Function(Uri? uri)? allowUrlLoading;
+
   /// {@macro HtmlEditorField.onInit}
   final VoidCallback? onInit;
 
@@ -65,6 +68,9 @@ class HtmlEditor extends StatelessWidget {
   /// {@macro HtmlEditorField.onChange}
   final ValueChanged<String>? onChange;
 
+  /// {@macro HtmlEditorField.onUrlPressed}
+  final ValueChanged<String>? onUrlPressed;
+
   const HtmlEditor({
     super.key,
     this.hint,
@@ -74,6 +80,7 @@ class HtmlEditor extends StatelessWidget {
     this.inAppWebViewSettings,
     this.spellCheck,
     this.customOptions,
+    this.allowUrlLoading,
     this.onInit,
     this.onFocus,
     this.onBlur,
@@ -84,6 +91,7 @@ class HtmlEditor extends StatelessWidget {
     this.onMouseUp,
     this.onMouseDown,
     this.onChange,
+    this.onUrlPressed,
   });
 
   @override

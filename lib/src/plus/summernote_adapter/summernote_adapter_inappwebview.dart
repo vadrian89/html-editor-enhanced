@@ -24,6 +24,7 @@ class SummernoteAdapterInappWebView extends SummernoteAdapter {
     super.enableOnKeydown = false,
     super.enableOnMouseUp = false,
     super.enableOnMouseDown = false,
+    super.enableOnUrlPressed = false,
   });
 
   @override
