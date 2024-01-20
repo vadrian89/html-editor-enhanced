@@ -3,12 +3,28 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:html_editor_plus/src/plus/core/editor_callbacks.dart';
 
-import 'summernote_adapter_inappwebview.dart';
-import 'summernote_adapter_web.dart';
+import '../core/editor_event.dart';
+import '../core/editor_file.dart';
+import '../core/editor_message.dart';
+import '../core/editor_upload_error.dart';
+import '../core/editor_value.dart';
 import '../core/enums.dart';
+import '../editor_controller.dart';
+import 'js_builder.dart';
 
 abstract class SummernoteAdapter {
   static const _defaultMaxFileSize = 10 * 1024 * 1024;
+
+  HtmlEditorValue _currentValue;
+
+  HtmlEditorValue get currentValue => _currentValue;
+
+  set currentHtml(String value) {
+    if (value != _currentValue.html) {
+      _currentValue = _currentValue.copyWith(html: HtmlEditorController.processHtml(html: value));
+      onChange?.call(value);
+    }
+  }
 
   /// A unique key for editor.
   ///
@@ -45,83 +61,41 @@ abstract class SummernoteAdapter {
   /// DO NOT ADD options which are already handled by the adapter.
   final List<String> customOptions;
 
-  /// If the [EditorCallbacks.onFocus] should be enabled.
-  final bool enableOnFocus;
-
-  /// If the [EditorCallbacks.onBlur] should be enabled.
-  final bool enableOnBlur;
-
-  /// If the [EditorCallbacks.onImageUpload] should be enabled.
-  final bool enableOnImageUpload;
-
-  /// If the [EditorCallbacks.onImageUploadError] should be enabled.
-  final bool enableOnImageUploadError;
-
-  /// If the [EditorCallbacks.onKeyup] should be enabled.
-  final bool enableOnKeyup;
-
-  /// If the [EditorCallbacks.onKeydown] should be enabled.
-  final bool enableOnKeydown;
-
-  /// If the [EditorCallbacks.onMouseUp] should be enabled.
-  final bool enableOnMouseUp;
-
-  /// If the [EditorCallbacks.onMouseDown] should be enabled.
-  final bool enableOnMouseDown;
-
-  /// If the [EditorCallbacks.onUrlPressed] should be enabled.
-  final bool enableOnUrlPressed;
-
-  /// Build string for [EditorCallbacks.onInit] callback.
-  String get onInitCallback => summernoteCallback(event: EditorCallbacks.onInit);
-
-  /// Build string for [EditorCallbacks.onChange] callback.
-  String get onChangeCallback => summernoteCallback(event: EditorCallbacks.onChange);
-
-  /// Build string for [EditorCallbacks.onChangeCodeview] callback.
+  /// {@macro HtmlEditorField.onInit}
   ///
-  /// This callback is called when the content has changed while in codeview mode.
-  String get onChangeCodeviewCallback => summernoteCallback(
-        event: EditorCallbacks.onChangeCodeview,
-      );
+  /// This is called when the editor is initialised and is called after the web view initialised.
+  /// Only when this is called we can change the initial html.
+  final VoidCallback? onInit;
 
-  /// Build string for [EditorCallbacks.onFocus] callback.
-  String get onFocusCallback => summernoteCallback(event: EditorCallbacks.onFocus);
+  /// {@macro HtmlEditorField.onFocus}
+  final VoidCallback? onFocus;
 
-  /// Build string for [EditorCallbacks.onBlur] callback.
-  String get onBlurCallback => summernoteCallback(event: EditorCallbacks.onBlur);
+  /// {@macro HtmlEditorField.onBlur}
+  final VoidCallback? onBlur;
 
-  /// Build string for [EditorCallbacks.onImageUpload] callback.
-  String get onImageUploadCallback => summernoteCallback(
-        event: EditorCallbacks.onImageUpload,
-        body: "uploadFile(files[0])",
-      );
+  /// {@macro HtmlEditorField.onImageUpload}
+  final ValueChanged<HtmlEditorFile>? onImageUpload;
 
-  /// Build string for [EditorCallbacks.onImageUploadError] callback.
-  String get onImageUploadErrorCallback => summernoteCallback(
-        event: EditorCallbacks.onImageUploadError,
-        body: "uploadError(file, error)",
-      );
+  /// {@macro HtmlEditorField.onImageUploadError}
+  final ValueChanged<HtmlEditorUploadError>? onImageUploadError;
 
-  /// Build string for [EditorCallbacks.onKeyup] callback.
-  String get onKeyupCallback => summernoteCallback(event: EditorCallbacks.onKeyup);
+  /// {@macro HtmlEditorField.onKeyup}
+  final ValueChanged<int>? onKeyup;
 
-  /// Build string for [EditorCallbacks.onKeydown] callback.
-  String get onKeydownCallback => summernoteCallback(event: EditorCallbacks.onKeydown);
+  /// {@macro HtmlEditorField.onKeydown}
+  final ValueChanged<int>? onKeydown;
 
-  /// Build string for [EditorCallbacks.onMouseUp] callback.
-  String get onMouseUpCallback => jQueryOnEventHandler(
-        selector: summernoteSelector,
-        event: "summernote.mouseup",
-        body: messageHandler(event: EditorCallbacks.onMouseUp),
-      );
+  /// {@macro HtmlEditorField.onMouseUp}
+  final VoidCallback? onMouseUp;
 
-  /// Build string for [EditorCallbacks.onMouseDown] callback.
-  String get onMouseDownCallback => jQueryOnEventHandler(
-        selector: summernoteSelector,
-        event: "summernote.mousedown",
-        body: messageHandler(event: EditorCallbacks.onMouseDown),
-      );
+  /// {@macro HtmlEditorField.onMouseDown}
+  final VoidCallback? onMouseDown;
+
+  /// {@macro HtmlEditorField.onChange}
+  final ValueChanged<String>? onChange;
+
+  /// {@macro HtmlEditorField.onUrlPressed}
+  final ValueChanged<String>? onUrlPressed;
 
   /// Build a string which contains javascript specific to the current platform.
   ///
@@ -135,9 +109,7 @@ abstract class SummernoteAdapter {
   /// Custom CSS used to style the editor.
   String css({ColorScheme? colorScheme}) {
     const requiredCss = '''
-.note-statusbar {
-  display: none;
-}
+.note-statusbar { display: none; }
 ''';
     if (colorScheme == null) return requiredCss;
 
@@ -180,7 +152,14 @@ abstract class SummernoteAdapter {
   ''';
   }
 
-  const SummernoteAdapter({
+  String get assetsPath => "packages/html_editor_plus/assets";
+  String get filePath => "$assetsPath/summernote-no-plugins.html";
+  String get cssPath => "$assetsPath/summernote-lite.min.css";
+  String get jqueryPath => "$assetsPath/jquery.min.js";
+  String get summernotePath => "$assetsPath/summernote-lite.min.js";
+
+  SummernoteAdapter({
+    HtmlEditorValue? initialValue,
     required this.key,
     this.summernoteSelector = "\$('#summernote-2')",
     this.hint,
@@ -188,222 +167,65 @@ abstract class SummernoteAdapter {
     this.maximumFileSize = _defaultMaxFileSize,
     this.spellCheck = false,
     this.customOptions = const [],
-    this.enableOnFocus = false,
-    this.enableOnBlur = false,
-    this.enableOnImageUpload = false,
-    this.enableOnImageUploadError = false,
-    this.enableOnKeyup = false,
-    this.enableOnKeydown = false,
-    this.enableOnMouseUp = false,
-    this.enableOnMouseDown = false,
-    this.enableOnUrlPressed = false,
-  });
+    this.onInit,
+    this.onFocus,
+    this.onBlur,
+    this.onImageUpload,
+    this.onImageUploadError,
+    this.onKeyup,
+    this.onKeydown,
+    this.onMouseUp,
+    this.onMouseDown,
+    this.onChange,
+    this.onUrlPressed,
+  }) : _currentValue = initialValue ?? const HtmlEditorValue();
 
-  factory SummernoteAdapter.web({
-    required String key,
-    String summernoteSelector = "\$('#summernote-2')",
-    String? hint,
-    ResizeMode resizeMode = ResizeMode.resizeToParent,
-    int? maximumFileSize,
-    bool? spellCheck,
-    List<String>? customOptions,
-    bool enableOnFocus = false,
-    bool enableOnBlur = false,
-    bool enableOnImageUpload = false,
-    bool enableOnImageUploadError = false,
-    bool enableOnKeyup = false,
-    bool enableOnKeydown = false,
-    bool enableOnMouseUp = false,
-    bool enableOnMouseDown = false,
-    bool enableOnUrlPressed = false,
-  }) =>
-      SummernoteAdapterWeb(
-        key: key,
-        summernoteSelector: summernoteSelector,
-        hint: hint,
-        resizeMode: resizeMode,
-        maximumFileSize: maximumFileSize ?? _defaultMaxFileSize,
-        spellCheck: spellCheck ?? false,
-        customOptions: customOptions ?? const [],
-        enableOnFocus: enableOnFocus,
-        enableOnBlur: enableOnBlur,
-        enableOnImageUpload: enableOnImageUpload,
-        enableOnImageUploadError: enableOnImageUploadError,
-        enableOnKeyup: enableOnKeyup,
-        enableOnKeydown: enableOnKeydown,
-        enableOnMouseUp: enableOnMouseUp,
-        enableOnMouseDown: enableOnMouseDown,
-        enableOnUrlPressed: enableOnUrlPressed,
-      );
+  /// Method used to load the summernote editor into the apropriate widget.
+  ///
+  /// Due to the fact that summernote is loaded differently on different platforms, this method
+  /// should be implemented in concrete classes.
+  Future<void> loadSummernote({ColorScheme? colorScheme});
 
-  factory SummernoteAdapter.inAppWebView({
-    required String key,
-    String summernoteSelector = "\$('#summernote-2')",
-    String? hint,
-    ResizeMode resizeMode = ResizeMode.resizeToParent,
-    int? maximumFileSize,
-    bool? spellCheck,
-    List<String>? customOptions,
-    bool enableOnFocus = false,
-    bool enableOnBlur = false,
-    bool enableOnImageUpload = false,
-    bool enableOnImageUploadError = false,
-    bool enableOnKeyup = false,
-    bool enableOnKeydown = false,
-    bool enableOnMouseUp = false,
-    bool enableOnMouseDown = false,
-    bool enableOnUrlPressed = false,
-  }) =>
-      SummernoteAdapterInappWebView(
-        key: key,
-        summernoteSelector: summernoteSelector,
-        hint: hint,
-        resizeMode: resizeMode,
-        maximumFileSize: maximumFileSize ?? 1048576,
-        spellCheck: spellCheck ?? false,
-        customOptions: customOptions ?? const [],
-        enableOnFocus: enableOnFocus,
-        enableOnBlur: enableOnBlur,
-        enableOnImageUpload: enableOnImageUpload,
-        enableOnImageUploadError: enableOnImageUploadError,
-        enableOnKeyup: enableOnKeyup,
-        enableOnKeydown: enableOnKeydown,
-        enableOnMouseUp: enableOnMouseUp,
-        enableOnMouseDown: enableOnMouseDown,
-        enableOnUrlPressed: enableOnUrlPressed,
-      );
+  /// Method used to handle messages sent from the summernote editor.
+  void handleEditorMessage(EditorMessage message);
+
+  /// Method to handle an [EditorEvent].
+  ///
+  /// This method should call the appropriate javascript code based on the event received.
+  ///
+  /// On Web send a JSON through `window.parent.postMessage` which contains code on how to handle
+  /// the incoming payload.
+  ///
+  /// If a custom event is received, the developer needs to make sure it's handled correctly on
+  /// javascript side.
+  void handleEvent(EditorEvent event);
+
+  /// Method used to dispose the summernote editor.
+  Future<void> dispose();
 
   /// Build a string which is used to initialise all the web code.
-  String init({bool allowUrlLoading = true}) => '''
-function toggleCodeView() {
-  ${callSummernoteMethod(method: 'codeview.toggle')}
-  if (${resizeMode == ResizeMode.resizeToParent}) {
-    resizeToParent();
-  }
-}
-
-function uploadFile(file) {
-  const reader = new FileReader();
-  let base64 = "";
-  reader.onload = function(_) {
-    base64 = reader.result;
-    const fileObject = ${objectFromFile(fileNode: "file")};
-    ${messageHandler(
-        event: EditorCallbacks.onImageUpload,
-        payload: "JSON.stringify(fileObject)",
-      )}
-  };
-  reader.onerror = function (_) {
-    const fileObject = ${objectFromFile(fileNode: "file")};
-    const fileObjectAsString = JSON.stringify(fileObject);
-    ${messageHandler(
-        event: EditorCallbacks.onImageUploadError,
-        payload: "JSON.stringify({'file': fileObjectAsString, 'error': 'An error occurred!'})",
-      )}
-  };
-  reader.readAsDataURL(file);
-}
-
-function uploadError(file, error) {
-  if (typeof file === 'string') {
-    ${messageHandler(
-        event: EditorCallbacks.onImageUploadError,
-        payload: "JSON.stringify({'file': file, 'error': error})",
-      )}
-  } else {
-    const fileObject = ${objectFromFile(fileNode: "file", hasBase64: false)};
-    const fileObjectAsString = JSON.stringify(fileObject);
-    ${messageHandler(
-        event: EditorCallbacks.onImageUploadError,
-        payload: "JSON.stringify({'file': fileObjectAsString, 'error': error})",
-      )}
-  }
-}
-
-function createLink(payload) {
-  const data = JSON.parse(payload);
-  const text = data["text"];
-  const url = data["url"];
-  ${callSummernoteMethod(
-        method: 'createLink',
-        payload: '{text: text, url: url, isNewWindow: data["isNewWindow"]}',
-      )}
-}
-
-function insertImage(payload) {
-  logDebug("Inserting image: " + payload);
-  const data = JSON.parse(payload);
-  const filename = data["filename"];
-  const url = data["url"];
-  ${callSummernoteMethod(method: 'insertImage', payload: 'url, filename')}
-}
-
-
-function setCursorToEnd() {
-    ${callSummernoteMethod(
-        method: "setLastRange",
-        payload: '\$.summernote.range.createFromNodeAfter($editorSelector[0]).select()',
-      )}
-}
-
-function setHtml(value) {
-  const currentValue = ${callSummernoteMethod(method: "code")}
-  logDebug("Current value: " + currentValue);
-  if (value == currentValue) {
-    return;
-  }
-  logDebug("Setting value: " + value);
-  ${callSummernoteMethod(method: "code", payload: 'value')}
-  setCursorToEnd();
-}
-
-function logDebug(message) {
-  if ($kDebugMode) console.log(message);
-}
-  
-function resizeToParent() {
-  logDebug("Resizing to parent");
-  ${editorHeight(height: "window.innerHeight")}
-  ${editorWidth(width: "window.innerWidth")}
-}
-  
-$summernoteSelector.summernote({
-  ${(hint?.trim().isNotEmpty ?? false) ? "placeholder: '$hint'," : ""}
-  tabsize: 2,
-  toolbar: [],
-  disableGrammar: false,
-  spellCheck: $spellCheck,
-  maximumImageFileSize: $maximumFileSize,
-  ${customOptions.join("\n")}
-  callbacks: {
-    ${summernoteCallbacks().join(",\n")}
-  }
-});
-
-${jsCallbacks().join("\n")}
-  
-$platformSpecificJavascript
-  
-if (${resizeMode == ResizeMode.resizeToParent}) {
-  resizeToParent();
-  addEventListener("resize", (event) => resizeToParent());
-}
-
-${onLinkPressedListener(allowUrlLoading: allowUrlLoading)}
-
-logDebug("Summernote initialised");
-''';
+  String init({bool allowUrlLoading = true}) => [
+        if (kIsWeb) '<script type="text/javascript">',
+        ...helperFunctions(allowUrlLoading: allowUrlLoading),
+        JsBuilder.jqReady(
+          body: JsBuilder.summernoteInit(
+            placeholder: hint,
+            spellCheck: spellCheck,
+            maximumFileSize: maximumFileSize,
+            customOptions: customOptions,
+            summernoteCallbacks: summernoteCallbacks(),
+          ),
+        ),
+        ...jsSummernoteCallbacks(),
+        platformSpecificJavascript,
+        JsBuilder.logDebugCall(message: "Summernote initialised", wrapInQuotes: true),
+        if (kIsWeb) '</script>',
+      ].join("\n");
 
   /// Builds a JavaScript code which will be used to send a message to the Dart side.
   ///
   /// [payload] is an optional payload.
   String messageHandler({required EditorCallbacks event, String? payload});
-
-  /// Build a JS function to get/set summernote's `outerHeight`.
-  String editorHeight({String height = ""}) => "$editorSelector.outerHeight($height);";
-
-  /// Build a JS function to get/set summernote's `width`.
-  String editorWidth({String? width = ""}) => "$editorSelector.width($width);";
 
   /// Build a JS function to call a summernote editor's function.
   ///
@@ -420,29 +242,78 @@ logDebug("Summernote initialised");
     return "$summernoteSelector.summernote(${args.join(",")});";
   }
 
-  /// Wrap a string in quotes.
-  ///
-  /// On mobile platform retrieving JSON values needs to be done with quotes.
-  String wrapInQuotes({required String value, bool wrap = true}) => wrap ? "'$value'" : value;
+  /// List of helper functions to be added to the summernote initialiser.
+  List<String> helperFunctions({bool allowUrlLoading = true}) => [
+        JsBuilder.logDebug(),
+        JsBuilder.resizeToParent(),
+        JsBuilder.setHtml(),
+        JsBuilder.createLink(),
+        JsBuilder.insertImageUrl(),
+        JsBuilder.setCursorToEnd(),
+        JsBuilder.toggleCodeView(resizeToParent: resizeMode == ResizeMode.resizeToParent),
+        JsBuilder.onLinkPressedListener(
+          allowUrlLoading: allowUrlLoading,
+          handlerBuilder: (payload) => messageHandler(
+            event: EditorCallbacks.onUrlPressed,
+            payload: payload,
+          ),
+        ),
+        JsBuilder.fileUpload(
+          handlerBuilder: (payload) => messageHandler(
+            event: EditorCallbacks.onImageUpload,
+            payload: payload,
+          ),
+          errorHandlerBuilder: (payload) => messageHandler(
+            event: EditorCallbacks.onImageUploadError,
+            payload: payload,
+          ),
+        ),
+        JsBuilder.uploadError(
+          handlerBuilder: (payload) => messageHandler(
+            event: EditorCallbacks.onImageUploadError,
+            payload: payload,
+          ),
+        )
+      ];
 
+  /// List of summernote callbacks to be added to the summernote initialiser.
   List<String> summernoteCallbacks({
     int? characterLimit,
   }) =>
       [
-        onInitCallback,
-        onChangeCallback,
-        onChangeCodeviewCallback,
-        if (enableOnFocus) onFocusCallback,
-        if (enableOnBlur) onBlurCallback,
-        if (enableOnImageUpload) onImageUploadCallback,
-        if (enableOnImageUploadError) onImageUploadErrorCallback,
-        if (enableOnKeydown) onKeydownCallback,
-        if (enableOnKeyup) onKeyupCallback,
+        summernoteCallback(event: EditorCallbacks.onInit),
+        summernoteCallback(event: EditorCallbacks.onChange),
+        summernoteCallback(event: EditorCallbacks.onChangeCodeview),
+        if (onFocus != null) summernoteCallback(event: EditorCallbacks.onFocus),
+        if (onBlur != null) summernoteCallback(event: EditorCallbacks.onBlur),
+        if (onImageUpload != null)
+          summernoteCallback(
+            event: EditorCallbacks.onImageUpload,
+            body: "uploadFile(files[0])",
+          ),
+        if (onImageUploadError != null)
+          summernoteCallback(
+            event: EditorCallbacks.onImageUploadError,
+            body: "uploadError(file, error)",
+          ),
+        if (onKeyup != null) summernoteCallback(event: EditorCallbacks.onKeyup),
+        if (onKeydown != null) summernoteCallback(event: EditorCallbacks.onKeydown),
       ];
 
-  List<String> jsCallbacks() => [
-        onMouseDownCallback,
-        onMouseUpCallback,
+  /// List of JS event listeners to be added to the summernote initialiser.
+  ///
+  /// These are event listeners which couldn't be added as summernote callbacks.
+  List<String> jsSummernoteCallbacks() => [
+        JsBuilder.jqEventListener(
+          selector: summernoteSelector,
+          event: "summernote.mouseup",
+          body: messageHandler(event: EditorCallbacks.onMouseUp),
+        ),
+        JsBuilder.jqEventListener(
+          selector: summernoteSelector,
+          event: "summernote.mousedown",
+          body: messageHandler(event: EditorCallbacks.onMouseDown),
+        ),
       ];
 
   String onSelectionChangeFunction({required String messageHandler}) => '''
@@ -517,58 +388,14 @@ logDebug("Summernote initialised");
     required EditorCallbacks event,
     String? body,
   }) =>
-      "${event.callback}: ${javaScriptCallbackClosure(
-        args: event.args,
-        body: body ?? messageHandler(event: event, payload: event.payload),
-      )}";
-
-  /// Build a jQuery handler for different type of events.
-  ///
-  /// [selector] is a jQuery selector for the element to which the event is attached.
-  String jQueryOnEventHandler({
-    required String selector,
-    required String event,
-    List<String> args = const [],
-    required String body,
-  }) =>
-      "$selector.on('$event', ${javaScriptCallbackClosure(args: args, body: body)});";
+      JsBuilder.summernoteCallback(
+        event: event,
+        body: (event) => body ?? messageHandler(event: event, payload: event.payload),
+      );
 
   /// Build a callable javascript function.
-  String javascriptFunction({required String name, String? arg}) => "$name(${arg ?? ""});";
-
-  /// Build a closure for a javascript callback.
-  ///
-  /// [args] are the arguments of the function.
-  /// [body] is the body of the function.
-  String javaScriptCallbackClosure({List<String> args = const [], required String body}) => '''
-    function(${args.join(', ')}) {
-      $body
-    }
-  ''';
-
-  /// Build a JS object for file upload.
-  String objectFromFile({required String fileNode, bool hasBase64 = true}) => '''
-    {
-      'lastModified': $fileNode.lastModified,
-      'lastModifiedDate': $fileNode.lastModifiedDate,
-      'name': $fileNode.name,
-      'size': $fileNode.size,
-      'mimeType': $fileNode.type,
-      ${hasBase64 ? "'base64': base64," : ""}
-    };
-  ''';
-
-  /// Javascript listener to handle link taps/clicks.
-  String onLinkPressedListener({bool allowUrlLoading = true}) => """
-document.addEventListener("click", function(event) {
-    const target = event.target;
-    if (target.tagName.toLowerCase() === "a") {
-      if (${!allowUrlLoading}) {
-        event.preventDefault();
-      }
-      const url = target.getAttribute("href");
-      ${enableOnUrlPressed ? messageHandler(event: EditorCallbacks.onUrlPressed, payload: "url") : ""}
-    }
-});
-""";
+  String javascriptFunction({required String name, String? arg}) =>
+      JsBuilder.functionCall(name: name, args: [
+        if (arg != null) arg,
+      ]);
 }

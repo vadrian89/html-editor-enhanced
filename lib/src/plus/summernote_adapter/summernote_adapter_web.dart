@@ -1,10 +1,29 @@
+// ignore_for_file: avoid_web_libraries_in_flutter
+
+import 'dart:async';
+import 'dart:convert';
+import 'dart:html' as html;
+import 'dart:ui_web' as ui;
+
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:html_editor_plus/src/plus/core/editor_callbacks.dart';
 import 'package:html_editor_plus/src/plus/core/editor_event.dart';
+import 'package:html_editor_plus/src/plus/core/editor_message.dart';
 import 'package:html_editor_plus/src/plus/core/enums.dart';
 
+import '../core/editor_file.dart';
+import '../core/editor_upload_error.dart';
 import 'summernote_adapter.dart';
 
 class SummernoteAdapterWeb extends SummernoteAdapter {
+  final html.IFrameElement _iframe;
+
+  late final StreamSubscription<EditorMessage> _messagesSubscription;
+
+  /// {@macro HtmlEditorField.allowUrlLoading}
+  final Future<bool> Function(Uri? uri)? allowUrlLoading;
+
   @override
   String get platformSpecificJavascript => '''
 function handleMessage(e) {
@@ -58,34 +77,56 @@ function handleMessage(e) {
 window.parent.addEventListener('message', handleMessage, false);
 ''';
 
+  @override
+  String get jqueryPath => "assets/${super.jqueryPath}";
+  @override
+  String get cssPath => "assets/${super.cssPath}";
+  @override
+  String get summernotePath => "assets/${super.summernotePath}";
+
+  Stream<EditorMessage> get _iframeMessagesStream =>
+      html.window.onMessage.map((event) => EditorMessage.fromJson(jsonDecode(event.data)));
+
   SummernoteAdapterWeb({
     required super.key,
+    super.initialValue,
+    this.allowUrlLoading,
     super.summernoteSelector = "\$('#summernote-2')",
     super.hint,
     super.resizeMode = ResizeMode.resizeToParent,
     super.customOptions,
     super.maximumFileSize,
     super.spellCheck,
-    super.enableOnBlur = false,
-    super.enableOnFocus = false,
-    super.enableOnImageUpload = false,
-    super.enableOnImageUploadError = false,
-    super.enableOnKeyup = false,
-    super.enableOnKeydown = false,
-    super.enableOnMouseUp = false,
-    super.enableOnMouseDown = false,
-    super.enableOnUrlPressed = false,
-  });
+    super.onInit,
+    super.onFocus,
+    super.onBlur,
+    super.onImageUpload,
+    super.onImageUploadError,
+    super.onKeyup,
+    super.onKeydown,
+    super.onMouseUp,
+    super.onMouseDown,
+    super.onChange,
+    super.onUrlPressed,
+  }) : _iframe = _initIframe(key) {
+    _messagesSubscription = _iframeMessagesStream.listen(handleEditorMessage);
+  }
 
   @override
-  String init({bool allowUrlLoading = true}) {
-    return '''
-<script type="text/javascript">
-\$(document).ready(function () {
-  ${super.init(allowUrlLoading: allowUrlLoading)}
-});
-</script> 
+  Future<void> loadSummernote({ColorScheme? colorScheme}) async {
+    final allowUrlLoading = (await this.allowUrlLoading?.call(null)) ?? true;
+    final summernoteInit = '''
+${init(allowUrlLoading: allowUrlLoading)}
+<style>
+${css(colorScheme: colorScheme)}
+</style>
 ''';
+    final defaultHtml = await rootBundle.loadString(filePath);
+    _iframe.srcdoc = defaultHtml
+        .replaceFirst('"jquery.min.js"', '"$jqueryPath"')
+        .replaceFirst('"summernote-lite.min.css"', '"$cssPath"')
+        .replaceFirst('"summernote-lite.min.js"', '"$summernotePath"')
+        .replaceFirst('<!--summernoteScripts-->', summernoteInit);
   }
 
   @override
@@ -95,5 +136,74 @@ window.parent.addEventListener('message', handleMessage, false);
   }) {
     final effectivePayload = payload ?? "null";
     return 'window.parent.postMessage(JSON.stringify({"key": "$key", "type": "toDart", "method": "$event", "payload": $effectivePayload}), "*");';
+  }
+
+  @override
+  void handleEditorMessage(EditorMessage message) {
+    if (message.type != "toDart") return;
+    debugPrint("Received message from iframe: $message");
+    return switch (EditorCallbacks.fromMessage(message)) {
+      EditorCallbacks.onInit => _onInit(),
+      EditorCallbacks.onChange => currentHtml = message.payload!,
+      EditorCallbacks.onChangeCodeview => currentHtml = message.payload!,
+      EditorCallbacks.onFocus => onFocus?.call(),
+      EditorCallbacks.onBlur => onBlur?.call(),
+      EditorCallbacks.onImageUpload => onImageUpload?.call(
+          HtmlEditorFile.fromJson(message.payload!),
+        ),
+      EditorCallbacks.onImageUploadError => onImageUploadError?.call(
+          HtmlEditorUploadError.fromJson(message.payload!),
+        ),
+      EditorCallbacks.onKeyup => onKeyup?.call(int.parse(message.payload!)),
+      EditorCallbacks.onKeydown => onKeydown?.call(int.parse(message.payload!)),
+      EditorCallbacks.onMouseDown => onMouseDown?.call(),
+      EditorCallbacks.onMouseUp => onMouseUp?.call(),
+      EditorCallbacks.onUrlPressed => onUrlPressed?.call(message.payload!),
+      _ => debugPrint("Uknown message received from iframe: $message"),
+    };
+  }
+
+  void _onInit() {
+    if (currentValue.hasValue) handleEvent(EditorSetHtml(payload: currentValue.html));
+    return onInit?.call();
+  }
+
+  @override
+  void handleEvent(EditorEvent event) {
+    const jsonEncoder = JsonEncoder();
+    final message = EditorMessage.fromEvent(
+      key: key,
+      event: event,
+      type: _eventType(event),
+    );
+    html.window.postMessage(jsonEncoder.convert(message.toJson()), '*');
+  }
+
+  String _eventType(EditorEvent event) => switch (event) {
+        EditorReload() => "toIframe",
+        EditorSetHtml() => "toIframe",
+        EditorSetCursorToEnd() => "toIframe",
+        EditorCreateLink() => "toIframe",
+        EditorInsertImageLink() => "toIframe",
+        EditorToggleView() => "toIframe",
+        _ => "toSummernote",
+      };
+
+  static html.IFrameElement _initIframe(String viewId) {
+    final iframe = html.IFrameElement();
+    iframe.style.height = "100%";
+    iframe.style.width = "100%";
+    iframe.style.border = "none";
+    iframe.style.overflow = "hidden";
+    iframe.style.padding = "0";
+    iframe.style.margin = "0";
+    ui.platformViewRegistry.registerViewFactory(viewId, (int viewId) => iframe);
+    return iframe;
+  }
+
+  @override
+  Future<void> dispose() async {
+    await _messagesSubscription.cancel();
+    handleEvent(const EditorDestroy());
   }
 }

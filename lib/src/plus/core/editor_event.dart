@@ -116,6 +116,11 @@ class EditorSetCursorToEnd extends EditorEvent {
   const EditorSetCursorToEnd() : super("setCursorToEnd");
 }
 
+/// Notifiy the editor to call destroy
+class EditorDestroy extends EditorEvent {
+  const EditorDestroy() : super("destroy");
+}
+
 /// Notify the editor to create a link.
 class EditorCreateLink extends EditorEvent {
   final bool isNewWindow;

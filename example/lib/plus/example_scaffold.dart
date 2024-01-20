@@ -18,7 +18,8 @@ class _HtmlEditorPlusExampleState extends State<HtmlEditorPlusExample> {
   @override
   void initState() {
     super.initState();
-    _controller = HtmlEditorController()..addListener(_onHtmlChanged);
+    _controller = HtmlEditorController(initialHtml: "<b>Some default text</b>")
+      ..addListener(_onHtmlChanged);
   }
 
   @override
