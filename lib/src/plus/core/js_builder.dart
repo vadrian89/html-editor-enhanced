@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
-import '../core/editor_callbacks.dart';
-import '../core/enums.dart';
+import 'editor_callbacks.dart';
+import 'enums.dart';
 
 /// Helper class used to help building the JS code for the editor.
 class JsBuilder {

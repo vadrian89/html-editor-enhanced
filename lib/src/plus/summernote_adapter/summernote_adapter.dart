@@ -10,7 +10,7 @@ import '../core/editor_upload_error.dart';
 import '../core/editor_value.dart';
 import '../core/enums.dart';
 import '../editor_controller.dart';
-import 'js_builder.dart';
+import '../core/js_builder.dart';
 
 abstract class SummernoteAdapter {
   static const _defaultMaxFileSize = 10 * 1024 * 1024;

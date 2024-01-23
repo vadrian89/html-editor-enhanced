@@ -6,7 +6,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:html_editor_plus/src/plus/core/editor_callbacks.dart';
 import 'package:html_editor_plus/src/plus/core/editor_event.dart';
 import 'package:html_editor_plus/src/plus/core/editor_message.dart';
-import 'package:html_editor_plus/src/plus/summernote_adapter/js_builder.dart';
+import 'package:html_editor_plus/src/plus/core/js_builder.dart';
 
 import '../core/editor_file.dart';
 import '../core/editor_upload_error.dart';
