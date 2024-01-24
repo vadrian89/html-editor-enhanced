@@ -108,17 +108,18 @@ window.parent.addEventListener('message', handleMessage, false);
     super.onMouseDown,
     super.onChange,
     super.onUrlPressed,
+    super.cssBuilder,
   }) : _iframe = _initIframe(key) {
     _messagesSubscription = _iframeMessagesStream.listen(handleEditorMessage);
   }
 
   @override
-  Future<void> loadSummernote({ColorScheme? colorScheme}) async {
+  Future<void> loadSummernote({ThemeData? theme}) async {
     final allowUrlLoading = (await this.allowUrlLoading?.call(null)) ?? true;
     final summernoteInit = '''
 ${init(allowUrlLoading: allowUrlLoading)}
 <style>
-${css(colorScheme: colorScheme)}
+${css(theme: theme)} 
 </style>
 ''';
     final defaultHtml = await rootBundle.loadString(filePath);

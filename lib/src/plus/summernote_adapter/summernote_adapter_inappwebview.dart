@@ -20,8 +20,7 @@ class SummernoteAdapterInappWebView extends SummernoteAdapter {
       _webviewController ??= webviewController;
 
   @override
-  String get platformSpecificJavascript => """
-""";
+  String get platformSpecificJavascript => "";
 
   SummernoteAdapterInappWebView({
     required super.key,
@@ -43,10 +42,11 @@ class SummernoteAdapterInappWebView extends SummernoteAdapter {
     super.onMouseDown,
     super.onChange,
     super.onUrlPressed,
+    super.cssBuilder,
   });
 
   @override
-  Future<void> loadSummernote({ColorScheme? colorScheme}) async {
+  Future<void> loadSummernote({ThemeData? theme}) async {
     _webviewController!.addJavaScriptHandler(
       handlerName: "onSummernoteEvent",
       callback: (arguments) => handleEditorMessage(
@@ -54,7 +54,7 @@ class SummernoteAdapterInappWebView extends SummernoteAdapter {
       ),
     );
     await _webviewController!.injectCSSFileFromAsset(assetFilePath: cssPath);
-    await _webviewController!.injectCSSCode(source: css(colorScheme: colorScheme));
+    await _webviewController!.injectCSSCode(source: css(theme: theme));
     await _webviewController!.injectJavascriptFileFromAsset(assetFilePath: jqueryPath);
     await _webviewController!.injectJavascriptFileFromAsset(assetFilePath: summernotePath);
     await _webviewController!.evaluateJavascript(source: init());

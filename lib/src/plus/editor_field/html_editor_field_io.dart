@@ -77,6 +77,9 @@ class HtmlEditorField extends StatefulWidget {
   /// {@macro HtmlEditorField.onUrlPressed}
   final ValueChanged<String>? onUrlPressed;
 
+  /// {@macro HtmlEditorField.cssBuilder}
+  final String Function(String css, ThemeData themeData)? cssBuilder;
+
   const HtmlEditorField({
     super.key,
     required this.controller,
@@ -99,6 +102,7 @@ class HtmlEditorField extends StatefulWidget {
     this.onMouseDown,
     this.onChange,
     this.onUrlPressed,
+    this.cssBuilder,
   });
 
   @override
@@ -142,6 +146,7 @@ class _HtmlEditorFieldState extends State<HtmlEditorField> {
       onMouseDown: widget.onMouseDown,
       onChange: _onChange,
       onUrlPressed: widget.onUrlPressed,
+      cssBuilder: widget.cssBuilder,
     );
     _eventsSubscription = _controller.events.listen(_adapter.handleEvent);
     _initialOptions = widget.inAppWebViewSettings ??
@@ -172,9 +177,7 @@ class _HtmlEditorFieldState extends State<HtmlEditorField> {
         key: ValueKey("webview_key_$_viewId"),
         initialFile: _filePath,
         onWebViewCreated: (controller) => _adapter.webviewController = controller,
-        onLoadStop: (controller, url) => _adapter.loadSummernote(
-          colorScheme: widget.themeData?.colorScheme,
-        ),
+        onLoadStop: (controller, url) => _adapter.loadSummernote(theme: Theme.of(context)),
         onReceivedError: (controller, request, error) => debugPrint(
           "message: ${error.description}",
         ),

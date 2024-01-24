@@ -31,19 +31,6 @@ class HtmlEditorField extends StatelessWidget {
   /// {@endtemplate}
   final HtmlEditorController controller;
 
-  /// {@template HtmlEditorField.themeData}
-  /// Theme data used by the editor.
-  ///
-  /// It's used to set the colors for background/foreground elements of the editor.
-  /// It uses [Colorscheme.surface] to set the background color of the editor.
-  /// It uses [Colorscheme.onSurface] to set the foreground color of the editor.
-  /// It uses [Colorscheme.surfaceVariant] to set the background color for other elements,
-  /// such as buttons/toolbar/etc.
-  ///
-  /// More in-depth customization will be available in the future.
-  /// {@endtemplate}
-  final ThemeData? themeData;
-
   /// {@template HtmlEditorField.inAppWebViewSettings}
   /// The initial options for the [InAppWebViewSettings] used only on mobile platforms.
   ///
@@ -164,11 +151,24 @@ class HtmlEditorField extends StatelessWidget {
   /// {@endtemplate}
   final ValueChanged<String>? onUrlPressed;
 
+  /// {@template HtmlEditorField.cssBuilder}
+  /// The builder for the CSS used by the editor.
+  ///
+  /// Should return a [String] containing valid CSS code.
+  ///
+  /// The default builder uses the current [ThemeData] to ensure the editor is always displayed
+  /// correctly.
+  ///
+  /// If you need to use a custom CSS or add your own styles, you can provide a custom builder.
+  /// The builder provides the current CSS string used and the current [ThemeData]. So you can
+  /// append or prepend your CSS to your liking.
+  /// {@endtemplate}
+  final String Function(String css, ThemeData themeData)? cssBuilder;
+
   const HtmlEditorField({
     super.key,
     required this.controller,
     this.resizeMode = ResizeMode.resizeToParent,
-    this.themeData,
     this.inAppWebViewSettings,
     this.maximumFileSize,
     this.spellCheck,
@@ -186,6 +186,7 @@ class HtmlEditorField extends StatelessWidget {
     this.onMouseDown,
     this.onChange,
     this.onUrlPressed,
+    this.cssBuilder,
   });
 
   @override

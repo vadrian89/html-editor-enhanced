@@ -23,9 +23,6 @@ class HtmlEditor extends StatefulWidget {
   /// {@macro HtmlEditorField.controller}
   final HtmlEditorController? controller;
 
-  /// {@macro HtmlEditorField.themeData}
-  final ThemeData? themeData;
-
   /// {@macro HtmlEditorField.spellCheck}
   final bool? spellCheck;
 
@@ -68,12 +65,14 @@ class HtmlEditor extends StatefulWidget {
   /// {@macro HtmlEditorField.onUrlPressed}
   final ValueChanged<String>? onUrlPressed;
 
+  /// {@macro HtmlEditorField.cssBuilder}
+  final String Function(String css, ThemeData themeData)? cssBuilder;
+
   const HtmlEditor({
     super.key,
     this.resizeMode = ResizeMode.resizeToParent,
     this.inAppWebViewSettings,
     this.controller,
-    this.themeData,
     this.spellCheck,
     this.customOptions,
     this.allowUrlLoading,
@@ -89,6 +88,7 @@ class HtmlEditor extends StatefulWidget {
     this.onMouseDown,
     this.onChange,
     this.onUrlPressed,
+    this.cssBuilder,
   });
 
   @override
@@ -97,19 +97,11 @@ class HtmlEditor extends StatefulWidget {
 
 class _HtmlEditorState extends State<HtmlEditor> {
   late final HtmlEditorController _controller;
-  ThemeData? _themeData;
 
   @override
   void initState() {
     super.initState();
     _controller = widget.controller ?? HtmlEditorController();
-    _themeData = widget.themeData;
-  }
-
-  @override
-  void didChangeDependencies() {
-    if (widget.themeData == null) _themeData = Theme.of(context);
-    super.didChangeDependencies();
   }
 
   @override
@@ -124,7 +116,6 @@ class _HtmlEditorState extends State<HtmlEditor> {
         controller: _controller,
         hint: widget.hint,
         resizeMode: widget.resizeMode,
-        themeData: _themeData,
         inAppWebViewSettings: widget.inAppWebViewSettings,
         spellCheck: widget.spellCheck,
         customOptions: widget.customOptions,
@@ -140,5 +131,6 @@ class _HtmlEditorState extends State<HtmlEditor> {
         onMouseDown: widget.onMouseDown,
         onChange: widget.onChange,
         onUrlPressed: widget.onUrlPressed,
+        cssBuilder: widget.cssBuilder,
       );
 }

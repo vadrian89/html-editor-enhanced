@@ -1,16 +1,16 @@
-import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:html_editor_plus/src/plus/core/editor_callbacks.dart';
 
+import '../core/css_builder.dart';
 import '../core/editor_event.dart';
 import '../core/editor_file.dart';
 import '../core/editor_message.dart';
 import '../core/editor_upload_error.dart';
 import '../core/editor_value.dart';
 import '../core/enums.dart';
-import '../editor_controller.dart';
 import '../core/js_builder.dart';
+import '../editor_controller.dart';
 
 abstract class SummernoteAdapter {
   static const _defaultMaxFileSize = 10 * 1024 * 1024;
@@ -97,6 +97,9 @@ abstract class SummernoteAdapter {
   /// {@macro HtmlEditorField.onUrlPressed}
   final ValueChanged<String>? onUrlPressed;
 
+  /// {@macro HtmlEditorField.cssBuilder}
+  final String Function(String css, ThemeData themeData)? cssBuilder;
+
   /// Build a string which contains javascript specific to the current platform.
   ///
   ///
@@ -107,49 +110,10 @@ abstract class SummernoteAdapter {
   String get editorSelector => "\$('div.note-editable')";
 
   /// Custom CSS used to style the editor.
-  String css({ColorScheme? colorScheme}) {
-    const requiredCss = '''
-.note-statusbar { display: none; }
-''';
-    if (colorScheme == null) return requiredCss;
-
-    final surface = colorScheme.surface.hex;
-    final onSurface = colorScheme.onSurface.hex;
-    final surfaceVariant = colorScheme.surfaceVariant.hex;
-    final onSurfaceVariant = colorScheme.onSurfaceVariant.hex;
-
-    return '''
-  $requiredCss
-
-  .note-placeholder {
-    color: #${onSurface}73 !important;
-  }
-   
-  .note-editing-area, .note-status-output, .note-codable, .CodeMirror, .CodeMirror-gutter, .note-modal-content, .note-input, .note-editable {
-    background: #$surface !important;
-  }
-  .panel-heading, .note-toolbar, .note-statusbar {
-    background: #$surfaceVariant !important;
-  }
-  input, select, textarea, .CodeMirror, .note-editable, [class^="note-icon-"], .caseConverter-toggle,
-  button > b, button > code, button > var, button > kbd, button > samp, button > small, button > ins, button > del, button > p, button > i {
-    color: #$onSurface !important;
-  }
-  textarea:focus, input:focus, span, label, .note-status-output {
-    color: #$onSurface !important;
-  }
-  .note-icon-font {
-    color: #$onSurfaceVariant !important;
-  }
-  .note-btn:not(.note-color-btn) {
-    background-color: #$surface !important;
-  }
-  .note-btn:focus,
-  .note-btn:active,
-  .note-btn.active {
-    background-color: #$surfaceVariant !important;
-  }
-  ''';
+  String css({ThemeData? theme}) {
+    final effectiveTheme = theme ?? ThemeData.light();
+    final effectiveCss = CssBuilder.buildCss(theme: effectiveTheme);
+    return cssBuilder?.call(effectiveCss, effectiveTheme) ?? effectiveCss;
   }
 
   String get assetsPath => "packages/html_editor_plus/assets";
@@ -178,13 +142,14 @@ abstract class SummernoteAdapter {
     this.onMouseDown,
     this.onChange,
     this.onUrlPressed,
+    this.cssBuilder,
   }) : _currentValue = initialValue ?? const HtmlEditorValue();
 
   /// Method used to load the summernote editor into the apropriate widget.
   ///
   /// Due to the fact that summernote is loaded differently on different platforms, this method
   /// should be implemented in concrete classes.
-  Future<void> loadSummernote({ColorScheme? colorScheme});
+  Future<void> loadSummernote({ThemeData? theme});
 
   /// Method used to handle messages sent from the summernote editor.
   void handleEditorMessage(EditorMessage message);

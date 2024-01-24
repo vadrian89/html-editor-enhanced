@@ -7,7 +7,7 @@ import 'package:file_picker/file_picker.dart';
 
 import 'plus/example_scaffold.dart';
 
-void main() => runApp(HtmlEditorExampleApp(showPlusExample: false));
+void main() => runApp(HtmlEditorExampleApp(showPlusExample: true));
 
 class HtmlEditorExampleApp extends StatelessWidget {
   final bool showPlusExample;
@@ -17,8 +17,10 @@ class HtmlEditorExampleApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) => MaterialApp(
         title: 'Flutter Demo',
-        theme: ThemeData(useMaterial3: false),
-        darkTheme: ThemeData.dark(useMaterial3: false),
+
+        /// theme: ThemeData(useMaterial3: false),
+
+        theme: ThemeData.dark(useMaterial3: false),
         home: showPlusExample
             ? const HtmlEditorPlusExample()
             : const HtmlEditorExample(title: 'Flutter HTML Editor Example'),

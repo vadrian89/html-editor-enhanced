@@ -21,11 +21,6 @@ class HtmlEditor extends StatelessWidget {
   /// {@macro HtmlEditorField.controller}
   final HtmlEditorController? controller;
 
-  /// {@macro HtmlEditorField.themeData}
-  ///
-  /// If not specified, the default theme data is used, provided from Theme.of(context).
-  final ThemeData? themeData;
-
   /// {@macro HtmlEditorField.inAppWebViewSettings}
   final InAppWebViewSettings? inAppWebViewSettings;
 
@@ -71,12 +66,14 @@ class HtmlEditor extends StatelessWidget {
   /// {@macro HtmlEditorField.onUrlPressed}
   final ValueChanged<String>? onUrlPressed;
 
+  /// {@macro HtmlEditorField.cssBuilder}
+  final String Function(String css, ThemeData themeData)? cssBuilder;
+
   const HtmlEditor({
     super.key,
     this.hint,
     this.resizeMode = ResizeMode.resizeToParent,
     this.controller,
-    this.themeData,
     this.inAppWebViewSettings,
     this.spellCheck,
     this.customOptions,
@@ -92,6 +89,7 @@ class HtmlEditor extends StatelessWidget {
     this.onMouseDown,
     this.onChange,
     this.onUrlPressed,
+    this.cssBuilder,
   });
 
   @override
