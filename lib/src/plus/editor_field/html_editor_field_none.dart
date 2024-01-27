@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:html_editor_plus/src/plus/core/editor_upload_error.dart';
 
-import '../core/editor_file.dart';
-import '../core/enums.dart';
-import '../editor_controller.dart';
+import 'package:html_editor_plus/core.dart';
+import 'package:html_editor_plus/editor_plus.dart';
 
 /// {@template HtmlEditorField}
 /// The widget representing the editor's text field where the user can insert the text.
@@ -152,7 +150,7 @@ class HtmlEditorField extends StatelessWidget {
   final ValueChanged<String>? onUrlPressed;
 
   /// {@template HtmlEditorField.cssBuilder}
-  /// The builder for the CSS used by the editor.
+  /// Used to build custom CSS code for the editor.
   ///
   /// Should return a [String] containing valid CSS code.
   ///
@@ -162,8 +160,45 @@ class HtmlEditorField extends StatelessWidget {
   /// If you need to use a custom CSS or add your own styles, you can provide a custom builder.
   /// The builder provides the current CSS string used and the current [ThemeData]. So you can
   /// append or prepend your CSS to your liking.
+  ///
+  /// Example of appending custom CSS:
+  /// ```dart
+  /// HtmlEditorField(
+  ///   cssBuilder: (css, themeData) => [
+  ///     css,
+  ///     CssBuilder.elementCss(
+  ///       selector: '.note-editable',
+  ///       style: {
+  ///         'color': CssBuilder.hexFromColor(color: themeData.colorScheme.onSurface),
+  ///         'background-color': CssBuilder.hexFromColor(color: themeData.colorScheme.surface),
+  ///       },
+  ///     ),
+  ///   ].join(),
+  /// )
+  /// ```
   /// {@endtemplate}
   final String Function(String css, ThemeData themeData)? cssBuilder;
+
+  /// {@template HtmlEditorField.jsInitBuilder}
+  /// Used to build custom JavaScript code for initialising Summernote editor.
+  ///
+  /// Should return a [String] containing valid JavaScript code.
+  ///
+  /// It provides the default implementation, to allow developers to prepend/append custom code.
+  ///
+  /// Example of appending custom code:
+  /// ```dart
+  /// HtmlEditorField(
+  ///   jsInitBuilder: (js) => [
+  ///     js,
+  ///     "console.log('Hello from JS!');",
+  ///   ].join(),
+  /// )
+  /// ```
+  /// Keep in mind that the summernote editor is in jQuery.ready() function.
+  /// For building the Js code you can use [JsBuilder].
+  /// {@endtemplate}
+  final String Function(String js)? jsInitBuilder;
 
   const HtmlEditorField({
     super.key,
@@ -187,6 +222,7 @@ class HtmlEditorField extends StatelessWidget {
     this.onChange,
     this.onUrlPressed,
     this.cssBuilder,
+    this.jsInitBuilder,
   });
 
   @override

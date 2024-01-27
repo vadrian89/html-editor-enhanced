@@ -100,6 +100,9 @@ abstract class SummernoteAdapter {
   /// {@macro HtmlEditorField.cssBuilder}
   final String Function(String css, ThemeData themeData)? cssBuilder;
 
+  /// {@macro HtmlEditorField.jsInitBuilder}
+  final String Function(String js)? jsInitBuilder;
+
   /// Build a string which contains javascript specific to the current platform.
   ///
   ///
@@ -143,6 +146,7 @@ abstract class SummernoteAdapter {
     this.onChange,
     this.onUrlPressed,
     this.cssBuilder,
+    this.jsInitBuilder,
   }) : _currentValue = initialValue ?? const HtmlEditorValue();
 
   /// Method used to load the summernote editor into the apropriate widget.
@@ -169,23 +173,29 @@ abstract class SummernoteAdapter {
   Future<void> dispose();
 
   /// Build a string which is used to initialise all the web code.
-  String init({bool allowUrlLoading = true}) => [
-        if (kIsWeb) '<script type="text/javascript">',
-        ...helperFunctions(allowUrlLoading: allowUrlLoading),
-        JsBuilder.jqReady(
-          body: JsBuilder.summernoteInit(
-            placeholder: hint,
-            spellCheck: spellCheck,
-            maximumFileSize: maximumFileSize,
-            customOptions: customOptions,
-            summernoteCallbacks: summernoteCallbacks(),
-          ),
+  String init({bool allowUrlLoading = true}) {
+    final coreCode = [
+      ...helperFunctions(allowUrlLoading: allowUrlLoading),
+      JsBuilder.jqReady(
+        body: JsBuilder.summernoteInit(
+          placeholder: hint,
+          spellCheck: spellCheck,
+          maximumFileSize: maximumFileSize,
+          customOptions: customOptions,
+          summernoteCallbacks: summernoteCallbacks(),
         ),
-        ...jsSummernoteCallbacks(),
-        platformSpecificJavascript,
-        JsBuilder.logDebugCall(message: "Summernote initialised", wrapInQuotes: true),
-        if (kIsWeb) '</script>',
-      ].join("\n");
+      ),
+      ...jsSummernoteCallbacks(),
+      platformSpecificJavascript,
+      JsBuilder.logDebugCall(message: "Summernote initialised", wrapInQuotes: true),
+    ].join();
+    final initJs = [
+      if (kIsWeb) '<script type="text/javascript">',
+      jsInitBuilder?.call(coreCode) ?? coreCode,
+      if (kIsWeb) '</script>',
+    ].join();
+    return initJs;
+  }
 
   /// Builds a JavaScript code which will be used to send a message to the Dart side.
   ///

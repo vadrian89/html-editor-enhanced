@@ -42,6 +42,10 @@ class _HtmlEditorPlusExampleState extends State<HtmlEditorPlusExample> {
                   print("allowUrlLoading called with uri: $uri");
                   return false;
                 },
+                jsInitBuilder: (js) => [
+                  js,
+                  "console.log('Hello from JS!');",
+                ].join(),
                 onInit: () => print("Editor ready!"),
                 onFocus: () => print("Focus gained!"),
                 onBlur: () => print("Focus lost!"),

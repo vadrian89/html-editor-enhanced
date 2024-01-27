@@ -63,6 +63,10 @@ class HtmlEditor extends StatefulWidget {
 
   /// {@macro HtmlEditorField.cssBuilder}
   final String Function(String css, ThemeData themeData)? cssBuilder;
+
+  /// {@macro HtmlEditorField.jsInitBuilder}
+  final String Function(String js)? jsInitBuilder;
+
   const HtmlEditor({
     super.key,
     this.resizeMode = ResizeMode.resizeToParent,
@@ -83,6 +87,7 @@ class HtmlEditor extends StatefulWidget {
     this.onUrlPressed,
     this.allowUrlLoading,
     this.cssBuilder,
+    this.jsInitBuilder,
   });
 
   @override
@@ -125,5 +130,6 @@ class _HtmlEditorState extends State<HtmlEditor> {
         onChange: widget.onChange,
         onUrlPressed: widget.onUrlPressed,
         cssBuilder: widget.cssBuilder,
+        jsInitBuilder: widget.jsInitBuilder,
       );
 }

@@ -109,6 +109,7 @@ window.parent.addEventListener('message', handleMessage, false);
     super.onChange,
     super.onUrlPressed,
     super.cssBuilder,
+    super.jsInitBuilder,
   }) : _iframe = _initIframe(key) {
     _messagesSubscription = _iframeMessagesStream.listen(handleEditorMessage);
   }

@@ -43,6 +43,7 @@ class SummernoteAdapterInappWebView extends SummernoteAdapter {
     super.onChange,
     super.onUrlPressed,
     super.cssBuilder,
+    super.jsInitBuilder,
   });
 
   @override

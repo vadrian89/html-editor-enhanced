@@ -80,6 +80,9 @@ class HtmlEditorField extends StatefulWidget {
   /// {@macro HtmlEditorField.cssBuilder}
   final String Function(String css, ThemeData themeData)? cssBuilder;
 
+  /// {@macro HtmlEditorField.jsInitBuilder}
+  final String Function(String js)? jsInitBuilder;
+
   const HtmlEditorField({
     super.key,
     required this.controller,
@@ -103,6 +106,7 @@ class HtmlEditorField extends StatefulWidget {
     this.onChange,
     this.onUrlPressed,
     this.cssBuilder,
+    this.jsInitBuilder,
   });
 
   @override
@@ -147,6 +151,7 @@ class _HtmlEditorFieldState extends State<HtmlEditorField> {
       onChange: _onChange,
       onUrlPressed: widget.onUrlPressed,
       cssBuilder: widget.cssBuilder,
+      jsInitBuilder: widget.jsInitBuilder,
     );
     _eventsSubscription = _controller.events.listen(_adapter.handleEvent);
     _initialOptions = widget.inAppWebViewSettings ??
