@@ -20,7 +20,7 @@ class HtmlEditorField extends StatefulWidget {
   final ResizeMode resizeMode;
 
   /// {@macro HtmlEditorField.controller}
-  final HtmlEditorController controller;
+  final HtmlEditorController? controller;
 
   /// {@macro HtmlEditorField.maximumFileSize}
   final int? maximumFileSize;
@@ -113,7 +113,7 @@ class _HtmlEditorFieldState extends State<HtmlEditorField> {
   @override
   void initState() {
     super.initState();
-    _controller = widget.controller;
+    _controller = widget.controller ?? HtmlEditorController();
     _adapter = SummernoteAdapterWeb(
       key: DateTime.now().millisecondsSinceEpoch.toString(),
       initialValue: _controller.clonedValue,
@@ -151,6 +151,7 @@ class _HtmlEditorFieldState extends State<HtmlEditorField> {
   void dispose() {
     _eventsSubscription.cancel();
     _controller.removeListener(_controllerListener);
+    if (widget.controller == null) _controller.dispose();
     _adapter.dispose();
     super.dispose();
   }

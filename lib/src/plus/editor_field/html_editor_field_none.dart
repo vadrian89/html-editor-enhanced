@@ -24,10 +24,8 @@ class HtmlEditorField extends StatelessWidget {
   /// The controller for the HTML editor.
   ///
   /// Provide a controller if you want to control the HTML editor programmatically.
-  ///
-  /// If you are using [HtmlEditorField] directly, you are `required` to provide a controller.
   /// {@endtemplate}
-  final HtmlEditorController controller;
+  final HtmlEditorController? controller;
 
   /// {@template HtmlEditorField.inAppWebViewSettings}
   /// The initial options for the [InAppWebViewSettings] used only on mobile platforms.

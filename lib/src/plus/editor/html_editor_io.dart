@@ -3,14 +3,12 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:html_editor_plus/core.dart';
 import 'package:html_editor_plus/editor_field.dart';
 
-import '../core/editor_file.dart';
-import '../core/editor_upload_error.dart';
 import '../editor_controller.dart';
 
 /// {@macro HtmlEditorField}
 ///
 /// This is used for mobile platforms.
-class HtmlEditor extends StatefulWidget {
+class HtmlEditor extends StatelessWidget {
   /// {@macro HtmlEditorField.hint}
   final String? hint;
 
@@ -96,46 +94,27 @@ class HtmlEditor extends StatefulWidget {
   });
 
   @override
-  State<HtmlEditor> createState() => _HtmlEditorState();
-}
-
-class _HtmlEditorState extends State<HtmlEditor> {
-  late final HtmlEditorController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = widget.controller ?? HtmlEditorController();
-  }
-
-  @override
-  void dispose() {
-    if (widget.controller == null) _controller.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) => HtmlEditorField(
-        key: widget.key,
-        controller: _controller,
-        hint: widget.hint,
-        resizeMode: widget.resizeMode,
-        inAppWebViewSettings: widget.inAppWebViewSettings,
-        spellCheck: widget.spellCheck,
-        customOptions: widget.customOptions,
-        allowUrlLoading: widget.allowUrlLoading,
-        onInit: widget.onInit,
-        onFocus: widget.onFocus,
-        onBlur: widget.onBlur,
-        onImageUpload: widget.onImageUpload,
-        onImageUploadError: widget.onImageUploadError,
-        onKeyup: widget.onKeyup,
-        onKeydown: widget.onKeydown,
-        onMouseUp: widget.onMouseUp,
-        onMouseDown: widget.onMouseDown,
-        onChange: widget.onChange,
-        onUrlPressed: widget.onUrlPressed,
-        cssBuilder: widget.cssBuilder,
-        jsInitBuilder: widget.jsInitBuilder,
+        key: key,
+        controller: controller,
+        hint: hint,
+        resizeMode: resizeMode,
+        inAppWebViewSettings: inAppWebViewSettings,
+        spellCheck: spellCheck,
+        customOptions: customOptions,
+        allowUrlLoading: allowUrlLoading,
+        onInit: onInit,
+        onFocus: onFocus,
+        onBlur: onBlur,
+        onImageUpload: onImageUpload,
+        onImageUploadError: onImageUploadError,
+        onKeyup: onKeyup,
+        onKeydown: onKeydown,
+        onMouseUp: onMouseUp,
+        onMouseDown: onMouseDown,
+        onChange: onChange,
+        onUrlPressed: onUrlPressed,
+        cssBuilder: cssBuilder,
+        jsInitBuilder: jsInitBuilder,
       );
 }

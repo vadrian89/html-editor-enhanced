@@ -27,7 +27,7 @@ class HtmlEditorField extends StatefulWidget {
   final InAppWebViewSettings? inAppWebViewSettings;
 
   /// {@macro HtmlEditorField.controller}
-  final HtmlEditorController controller;
+  final HtmlEditorController? controller;
 
   /// {@macro HtmlEditorField.themeData}
   final ThemeData? themeData;
@@ -130,7 +130,7 @@ class _HtmlEditorFieldState extends State<HtmlEditorField> {
   @override
   void initState() {
     super.initState();
-    _controller = widget.controller;
+    _controller = widget.controller ?? HtmlEditorController();
     _adapter = SummernoteAdapterInappWebView(
       key: DateTime.now().millisecondsSinceEpoch.toString(),
       initialValue: _controller.clonedValue,
@@ -174,6 +174,7 @@ class _HtmlEditorFieldState extends State<HtmlEditorField> {
     _controller.removeListener(_controllerListener);
     _keyboardVisibilitySubscription.cancel();
     _adapter.dispose();
+    if (widget.controller == null) _controller.dispose();
     super.dispose();
   }
 
