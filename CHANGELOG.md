@@ -3,6 +3,11 @@
 * Fixed issue with Summernote icons not loading.
 * Added allowUrlLoading field to plus version.
 * Added onUrlPressed callback to plus version.
+* Updated adapter to follow more closely the pattern
+* Created JsBuilder class to build javascript code used to initialise and manage Summernote editor
+* Added jsInitBuilder to HtmlEditor/HtmlEditorField to allow developers to add their own JavaScript code
+* Created CssBuilder class to build theme-based CSS for the Summernote editor 
+* Added cssBuilder to HtmlEditor/HtmlEditorField to allow developers to add their own CSS styles
 
 ## [0.0.3] = 2024-01-12
 * Fixed exception with scrollbar on web.

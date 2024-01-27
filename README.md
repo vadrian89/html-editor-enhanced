@@ -91,7 +91,20 @@ Side effects of this change:
 ### Other changes
 Features removed:
 - Developers will not have access to **InAppWebViewController**, because the editor means to be a common interface for different platforms. As such it makes no sense to expose the controller for mobile. At least not in the current phase.   
-- Editor notifications will not be implemented. The editor should be exactly that, a HTML RICH text editor which outputs the text as a HTML string. Notifications should be implemented, separately, through Flutter.  
+- Editor notifications will not be implemented. The editor should be exactly that, a HTML RICH text editor which outputs the text as a HTML string. Notifications should be implemented, separately, through Flutter.   
+
+
+### Implementation progress
+- [x] Editor field which accepts HTML code
+- [x] Controller which supports the original API
+- [x] Theme-based CSS, with CSS builder available to developers
+- [x] JavaScript builder property which allows developers to add custom JavaScript code
+- [x] Summernote callbacks
+- [ ] Editor toolbar
+- [ ] Summernote mentions
+- [ ] macOS support using **InAppWebView**
+- [ ] Custom editor events 
+- [ ] Custom editor callbacks
 
 ## License
 
