@@ -1,12 +1,13 @@
 name: html_editor_plus
-description: HTML rich text editor for Android, iOS, and Web, using the Summernote library.
+description:
+  HTML rich text editor for Android, iOS, and Web, using the Summernote library.
   Enhanced with highly customizable widget-based controls, bug fixes, callbacks, dark mode, and more.
 version: 0.0.3
 homepage: https://github.com/vadrian89/html-editor-plus
 
 environment:
-  sdk: ">=3.0.1 <4.0.0"
-  flutter: ">=3.0.0"
+  sdk: '>=3.0.1 <4.0.0'
+  flutter: '>=3.0.0'
 
 dependencies:
   # plugin to get files from filesystem
@@ -43,6 +44,15 @@ flutter:
     - assets/
     - assets/font/
     - assets/plugins/summernote-at-mention/
+    - assets/summernote.html
+    - assets/summernote-no-plugins.html
+    - assets/summernote-lite.min.css
+    - assets/summernote-lite-dark.css
+    - assets/summernote-lite.min.js
+    - assets/jquery.min.js
+    - assets/font/summernote.eot
+    - assets/font/summernote.ttf
+    - assets/plugins/summernote-at-mention/summernote-at-mention.js
   # This section identifies this Flutter project as a plugin project.
   # The 'pluginClass' and Android 'package' identifiers should not ordinarily
   # be modified. They are used by the tooling to maintain consistency when
@@ -61,6 +71,10 @@ flutter:
   # in this "flutter" section. Each entry in this list should have a
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
+  fonts:
+    - family: summernote
+      fonts:
+        - asset: assets/font/summernote.ttf
   # example:
   # fonts:
   #   - family: Schyler
