@@ -6,6 +6,7 @@ import '../core/css_builder.dart';
 import '../core/editor_event.dart';
 import '../core/editor_file.dart';
 import '../core/editor_message.dart';
+import '../core/editor_selection_state.dart';
 import '../core/editor_upload_error.dart';
 import '../core/editor_value.dart';
 import '../core/enums.dart';
@@ -97,6 +98,9 @@ abstract class SummernoteAdapter {
   /// {@macro HtmlEditorField.onUrlPressed}
   final ValueChanged<String>? onUrlPressed;
 
+  /// {@macro HtmlEditorField.onSelectionChanged}
+  final ValueChanged<EditorSelectionState>? onSelectionChanged;
+
   /// {@macro HtmlEditorField.cssBuilder}
   final String Function(String css, ThemeData themeData)? cssBuilder;
 
@@ -145,6 +149,7 @@ abstract class SummernoteAdapter {
     this.onMouseDown,
     this.onChange,
     this.onUrlPressed,
+    this.onSelectionChanged,
     this.cssBuilder,
     this.jsInitBuilder,
   }) : _currentValue = initialValue ?? const HtmlEditorValue();
@@ -248,7 +253,13 @@ abstract class SummernoteAdapter {
             event: EditorCallbacks.onImageUploadError,
             payload: payload,
           ),
-        )
+        ),
+        JsBuilder.onSelectionChange(
+          handlerBuilder: (payload) => messageHandler(
+            event: EditorCallbacks.onSelectionChanged,
+            payload: payload,
+          ),
+        ),
       ];
 
   /// List of summernote callbacks to be added to the summernote initialiser.
@@ -290,71 +301,6 @@ abstract class SummernoteAdapter {
           body: messageHandler(event: EditorCallbacks.onMouseDown),
         ),
       ];
-
-  String onSelectionChangeFunction({required String messageHandler}) => '''
-    function onSelectionChange() {
-          let {anchorNode, anchorOffset, focusNode, focusOffset} = document.getSelection();
-          var isBold = false;
-          var isItalic = false;
-          var isUnderline = false;
-          var isStrikethrough = false;
-          var isSuperscript = false;
-          var isSubscript = false;
-          var isUL = false;
-          var isOL = false;
-          var isLeft = false;
-          var isRight = false;
-          var isCenter = false;
-          var isFull = false;
-          var parent;
-          var fontName;
-          var fontSize = 16;
-          var foreColor = "000000";
-          var backColor = "FFFF00";
-          var focusNode2 = \$(window.getSelection().focusNode);
-          var parentList = focusNode2.closest("div.note-editable ol, div.note-editable ul");
-          var parentListType = parentList.css('list-style-type');
-          var lineHeight = \$(focusNode.parentNode).css('line-height');
-          var direction = \$(focusNode.parentNode).css('direction');
-          if (document.queryCommandState) {
-            isBold = document.queryCommandState('bold');
-            isItalic = document.queryCommandState('italic');
-            isUnderline = document.queryCommandState('underline');
-            isStrikethrough = document.queryCommandState('strikeThrough');
-            isSuperscript = document.queryCommandState('superscript');
-            isSubscript = document.queryCommandState('subscript');
-            isUL = document.queryCommandState('insertUnorderedList');
-            isOL = document.queryCommandState('insertOrderedList');
-            isLeft = document.queryCommandState('justifyLeft');
-            isRight = document.queryCommandState('justifyRight');
-            isCenter = document.queryCommandState('justifyCenter');
-            isFull = document.queryCommandState('justifyFull');
-          }
-          if (document.queryCommandValue) {
-            parent = document.queryCommandValue('formatBlock');
-            fontSize = document.queryCommandValue('fontSize');
-            foreColor = document.queryCommandValue('foreColor');
-            backColor = document.queryCommandValue('hiliteColor');
-            fontName = document.queryCommandValue('fontName');
-          }
-          var message = {
-            ${kIsWeb ? "'view': $key," : ""}
-            ${kIsWeb ? "'type': 'toDart: updateToolbar'," : ""},
-            'style': parent,
-            'fontName': fontName,
-            'fontSize': fontSize,
-            'font': [isBold, isItalic, isUnderline],
-            'miscFont': [isStrikethrough, isSuperscript, isSubscript],
-            'color': [foreColor, backColor],
-            'paragraph': [isUL, isOL],
-            'listStyle': parentListType,
-            'align': [isLeft, isCenter, isRight, isFull],
-            'lineHeight': lineHeight,
-            'direction': direction,
-          };
-          $messageHandler
-        }
-''';
 
   /// Build a summernote callback for the editor.
   ///

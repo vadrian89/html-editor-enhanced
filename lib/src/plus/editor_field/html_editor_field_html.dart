@@ -134,6 +134,7 @@ class _HtmlEditorFieldState extends State<HtmlEditorField> {
       onMouseDown: widget.onMouseDown,
       onChange: _onChange,
       onUrlPressed: widget.onUrlPressed,
+      onSelectionChanged: (value) => _controller.selectionState = value,
       cssBuilder: widget.cssBuilder,
       jsInitBuilder: widget.jsInitBuilder,
     );
@@ -176,7 +177,7 @@ class _HtmlEditorFieldState extends State<HtmlEditorField> {
 
   void _controllerListener() {
     debugPrint("Controller listener called");
-    if (_controller.value != _adapter.currentValue) {
+    if (_controller.html != _adapter.currentValue.html) {
       _adapter.handleEvent(EditorSetHtml(payload: _controller.html));
     }
   }

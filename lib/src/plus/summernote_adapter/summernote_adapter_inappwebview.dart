@@ -2,15 +2,17 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:html_editor_plus/src/plus/core/editor_callbacks.dart';
-import 'package:html_editor_plus/src/plus/core/editor_event.dart';
-import 'package:html_editor_plus/src/plus/core/editor_message.dart';
-import 'package:html_editor_plus/src/plus/core/js_builder.dart';
 
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+
+import '../core/editor_callbacks.dart';
+import '../core/editor_event.dart';
+import '../core/editor_message.dart';
+import '../core/editor_selection_state.dart';
+import '../core/enums.dart';
 import '../core/editor_file.dart';
 import '../core/editor_upload_error.dart';
-import '../core/enums.dart';
+import '../core/js_builder.dart';
 import 'summernote_adapter.dart';
 
 class SummernoteAdapterInappWebView extends SummernoteAdapter {
@@ -42,6 +44,7 @@ class SummernoteAdapterInappWebView extends SummernoteAdapter {
     super.onMouseDown,
     super.onChange,
     super.onUrlPressed,
+    super.onSelectionChanged,
     super.cssBuilder,
     super.jsInitBuilder,
   });
@@ -90,6 +93,9 @@ class SummernoteAdapterInappWebView extends SummernoteAdapter {
       EditorCallbacks.onMouseUp => onMouseUp?.call(),
       EditorCallbacks.onMouseDown => onMouseDown?.call(),
       EditorCallbacks.onUrlPressed => onUrlPressed?.call(message.payload!),
+      EditorCallbacks.onSelectionChanged => onSelectionChanged?.call(
+          EditorSelectionState.fromEncodedJson(message.payload!),
+        ),
       _ => debugPrint("Uknown message received from editor: $message"),
     };
   }

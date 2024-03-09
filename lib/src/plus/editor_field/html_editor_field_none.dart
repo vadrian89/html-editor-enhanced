@@ -147,6 +147,11 @@ class HtmlEditorField extends StatelessWidget {
   /// {@endtemplate}
   final ValueChanged<String>? onUrlPressed;
 
+  /// {@template HtmlEditorField.onSelectionChange}
+  /// Callback to be called when the content, or part of it, is selected by the user.
+  /// {@endtemplate}
+  final ValueChanged<String>? onSelectionChange;
+
   /// {@template HtmlEditorField.cssBuilder}
   /// Used to build custom CSS code for the editor.
   ///
@@ -221,6 +226,7 @@ class HtmlEditorField extends StatelessWidget {
     this.onUrlPressed,
     this.cssBuilder,
     this.jsInitBuilder,
+    this.onSelectionChange,
   });
 
   @override
