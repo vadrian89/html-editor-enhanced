@@ -9,14 +9,7 @@ class CssBuilder {
   /// Get the hex code for the [color].
   ///
   /// `#` is added to the start of the hex code.
-  static String hexFromColor({required Color color}) => "#${color.hex}";
-
-  /// Get a [Color] from a hex code.
-  static Color colorFromHex({required String hex}) {
-    final cleanedHex = hex.replaceAll("#", "");
-    final colorInt = int.parse(cleanedHex, radix: 16);
-    return Color(colorInt + 0xFF000000);
-  }
+  static String hexFromColor({Color? color}) => (color != null) ? "#${color.hex}" : "";
 
   /// Build CSS for an html element.
   ///

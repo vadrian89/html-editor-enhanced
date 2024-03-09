@@ -151,5 +151,6 @@ class _HtmlEditorPlusExampleState extends State<HtmlEditorPlusExample> {
   void _onHtmlChanged() {
     print("Controller HTML value: ${_controller.html}");
     print("Controller character count: ${_controller.characterCount}");
+    print("Controller selection state: ${_controller.selectionState}");
   }
 }

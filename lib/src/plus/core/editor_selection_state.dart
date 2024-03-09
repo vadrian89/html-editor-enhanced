@@ -5,6 +5,8 @@ import 'package:equatable/equatable.dart';
 
 import 'package:flutter/material.dart';
 
+import 'css_builder.dart';
+
 /// The state of the selection in the editor.
 class EditorSelectionState extends Equatable {
   // The parent element of the selection
@@ -35,10 +37,10 @@ class EditorSelectionState extends Equatable {
   final bool isSubscript;
 
   // The foreground color of the selection
-  final String? foregroundColor;
+  final Color? foregroundColor;
 
   // The background color of the selection
-  final String? backgroundColor;
+  final Color? backgroundColor;
 
   // Whether the selection is an unordered list
   final bool isUl;
@@ -97,27 +99,50 @@ class EditorSelectionState extends Equatable {
       EditorSelectionState.fromJson(jsonDecode(encodedJson));
 
   factory EditorSelectionState.fromJson(Map<String, dynamic> json) => EditorSelectionState(
-        parentElement: json['style'],
-        fontName: json['fontName'],
-        fontSize: int.parse(json['fontSize']),
-        isBold: json['isBold'],
-        isItalic: json['isItalic'],
-        isUnderline: json['isUnderline'],
-        isStrikethrough: json['isStrikethrough'],
-        isSuperscript: json['isSuperscript'],
-        isSubscript: json['isSubscript'],
-        foregroundColor: json['foregroundColor'],
-        backgroundColor: json['backgroundColor'],
-        isUl: json['isUL'],
-        isOl: json['isOL'],
-        listStyle: json['listStyle'],
-        isAlignLeft: json['alignLeft'],
-        isAlignCenter: json['alignCenter'],
-        isAlignRight: json['alignRight'],
-        isAlignJustify: json['alignFull'],
-        lineHeight: json['lineHeight'],
-        textDirection: json['direction'] == 'rtl' ? TextDirection.rtl : TextDirection.ltr,
+        parentElement: json["style"],
+        fontName: json["fontName"],
+        fontSize: int.tryParse(json["fontSize"]?.toString() ?? ""),
+        isBold: json["isBold"] ?? false,
+        isItalic: json["isItalic"] ?? false,
+        isUnderline: json["isUnderline"] ?? false,
+        isStrikethrough: json["isStrikethrough"] ?? false,
+        isSuperscript: json["isSuperscript"] ?? false,
+        isSubscript: json["isSubscript"] ?? false,
+        foregroundColor: _colorFromJson(json["foregroundColor"]),
+        backgroundColor: _colorFromJson(json["backgroundColor"]),
+        isUl: json["isUL"] ?? false,
+        isOl: json["isOL"] ?? false,
+        listStyle: json["listStyle"],
+        isAlignLeft: json["alignLeft"] ?? false,
+        isAlignCenter: json["alignCenter"] ?? false,
+        isAlignRight: json["alignRight"] ?? false,
+        isAlignJustify: json["alignFull"] ?? false,
+        lineHeight: json["lineHeight"],
+        textDirection: json["direction"] == "rtl" ? TextDirection.rtl : TextDirection.ltr,
       );
+
+  Map<String, dynamic> toJson() => <String, dynamic>{
+        "style": parentElement,
+        "fontName": fontName,
+        "fontSize": fontSize,
+        "isBold": isBold,
+        "isItalic": isItalic,
+        "isUnderline": isUnderline,
+        "isStrikethrough": isStrikethrough,
+        "isSuperscript": isSuperscript,
+        "isSubscript": isSubscript,
+        "foregroundColor": CssBuilder.hexFromColor(color: foregroundColor),
+        "backgroundColor": CssBuilder.hexFromColor(color: backgroundColor),
+        "isUL": isUl,
+        "isOL": isOl,
+        "listStyle": listStyle,
+        "alignLeft": isAlignLeft,
+        "alignCenter": isAlignCenter,
+        "alignRight": isAlignRight,
+        "alignFull": isAlignJustify,
+        "lineHeight": lineHeight,
+        "direction": textDirection == TextDirection.rtl ? "rtl" : "ltr",
+      };
 
   @override
   List<Object?> get props => [
@@ -142,4 +167,37 @@ class EditorSelectionState extends Equatable {
         lineHeight,
         textDirection,
       ];
+}
+
+Color? _colorFromJson([Object? json]) {
+  if (json?.toString().isEmpty ?? true) return null;
+  try {
+    final jsonString = json.toString();
+    if (jsonString.toLowerCase().contains("rgb")) return _fromRGB(jsonString);
+    if (jsonString.startsWith("#")) return _fromHex(jsonString);
+    return null;
+  } catch (e, stackTrace) {
+    debugPrintStack(
+      label: "Error parsing color ($json) from JSON: $e",
+      stackTrace: stackTrace,
+      maxFrames: 10,
+    );
+    return null;
+  }
+}
+
+Color _fromHex(String hex) {
+  final cleanedHex = hex.replaceAll("#", "");
+  final colorInt = int.parse(cleanedHex, radix: 16);
+  return Color(colorInt + 0xFF000000);
+}
+
+Color _fromRGB(String rgb) {
+  final values = rgb.replaceAll(RegExp(r"rgb|\(|\)"), "").split(",");
+  return Color.fromRGBO(
+    int.parse(values[0]),
+    int.parse(values[1]),
+    int.parse(values[2]),
+    1,
+  );
 }
