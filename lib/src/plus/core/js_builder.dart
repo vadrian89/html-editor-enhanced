@@ -287,6 +287,86 @@ if (target.tagName.toLowerCase() === "a") {
 ''',
       );
 
+  /// Build the onSelectionChange function.
+  ///
+  /// [handlerBuilder] is a function which will build the handler function. It will receive the
+  /// payload as a parameter.
+  /// [key] is the key of the view.
+  static String onSelectionChange({
+    required String Function(String payload)? handlerBuilder,
+  }) =>
+      '''
+    function onSelectionChange() {
+          let {anchorNode, anchorOffset, focusNode, focusOffset} = document.getSelection();
+          var isBold = false;
+          var isItalic = false;
+          var isUnderline = false;
+          var isStrikethrough = false;
+          var isSuperscript = false;
+          var isSubscript = false;
+          var isUL = false;
+          var isOL = false;
+          var isLeft = false;
+          var isRight = false;
+          var isCenter = false;
+          var isFull = false;
+          var parent;
+          var fontName;
+          var fontSize = 16;
+          var foreColor = "000000";
+          var backColor = "FFFF00";
+          var focusNode2 = \$(window.getSelection().focusNode);
+          var parentList = focusNode2.closest("div.note-editable ol, div.note-editable ul");
+          var parentListType = parentList.css('list-style-type');
+          var lineHeight = \$(focusNode.parentNode).css('line-height');
+          var direction = \$(focusNode.parentNode).css('direction');
+          if (document.queryCommandState) {
+            isBold = document.queryCommandState('bold');
+            isItalic = document.queryCommandState('italic');
+            isUnderline = document.queryCommandState('underline');
+            isStrikethrough = document.queryCommandState('strikeThrough');
+            isSuperscript = document.queryCommandState('superscript');
+            isSubscript = document.queryCommandState('subscript');
+            isUL = document.queryCommandState('insertUnorderedList');
+            isOL = document.queryCommandState('insertOrderedList');
+            isLeft = document.queryCommandState('justifyLeft');
+            isRight = document.queryCommandState('justifyRight');
+            isCenter = document.queryCommandState('justifyCenter');
+            isFull = document.queryCommandState('justifyFull');
+          }
+          if (document.queryCommandValue) {
+            parent = document.queryCommandValue('formatBlock');
+            fontSize = document.queryCommandValue('fontSize');
+            foreColor = document.queryCommandValue('foreColor');
+            backColor = document.queryCommandValue('hiliteColor');
+            fontName = document.queryCommandValue('fontName');
+          }
+          const message = {
+            'style': parent,
+            'fontName': fontName,
+            'fontSize': fontSize,
+            'isBold': isBold,
+            'isItalic': isItalic,
+            'isUnderline': isUnderline,
+            'isStrikethrough': isStrikethrough,
+            'isSuperscript': isSuperscript,
+            'isSubscript': isSubscript,
+            'foregroundColor': foreColor,
+            'backgroundColor': backColor,
+            'isUL': isUL,
+            'isOL': isOL,
+            'listStyle': parentListType,
+            'alignLeft': isLeft,
+            'alignRight': isRight,
+            'alignCenter': isCenter,
+            'alignFull': isFull,
+            'lineHeight': lineHeight,
+            'direction': direction,
+          };
+          ${handlerBuilder?.call("JSON.stringify(message)") ?? ""}
+        }
+''';
+
   /// Build the initialiser code for the summernote editor.
   ///
   /// [selector] is the jQuery selector of the element where summernote editor is initialised. It's
@@ -317,5 +397,6 @@ if (${resizeMode == ResizeMode.resizeToParent}) {
   resizeToParent();
   addEventListener("resize", (event) => resizeToParent());
 }
+document.addEventListener("selectionchange", () => onSelectionChange());
 ''';
 }
