@@ -1,9 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
-import 'package:html_editor_plus/src/plus/core/editor_event.dart';
 import 'package:meta/meta.dart';
 
+import 'core/editor_event.dart';
+import 'core/editor_selection_state.dart';
 import 'core/editor_value.dart';
 
 /// The controller for the HTML editor.
@@ -38,6 +39,16 @@ class HtmlEditorController extends ValueNotifier<HtmlEditorValue> {
   ///
   /// The default value is `true`.
   final bool processOutputHtml;
+
+  /// {@macro HtmlEditorValue.selectionState}
+  ///
+  /// This is a shorthand for [HtmlEditorValue.selectionState].
+  EditorSelectionState get selectionState => value.selectionState;
+
+  @internal
+  set selectionState(EditorSelectionState selectionState) {
+    value = value.copyWith(selectionState: selectionState);
+  }
 
   /// The HTML value of the editor.
   ///

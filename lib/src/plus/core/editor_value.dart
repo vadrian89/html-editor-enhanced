@@ -1,7 +1,11 @@
-import 'package:flutter/foundation.dart';
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:equatable/equatable.dart';
+import 'package:meta/meta.dart';
+
+import 'editor_selection_state.dart';
 
 @immutable
-class HtmlEditorValue {
+class HtmlEditorValue extends Equatable {
   final String html;
 
   /// Check if the [html] string is not empty.
@@ -9,30 +13,47 @@ class HtmlEditorValue {
   /// It trims the string and checks if it's not empty.
   bool get hasValue => html.trim().isNotEmpty;
 
-  const HtmlEditorValue({this.html = ""});
+  final EditorSelectionState _selectionState;
 
-  const HtmlEditorValue.initial({String? html}) : html = html ?? "";
+  /// {@template HtmlEditorValue.selectionState}
+  /// The state of the selected text from the editor.
+  ///
+  /// It is used to manage the state of the toolbar buttons.
+  ///
+  /// The value is set internally by the editor field and is read-only.
+  /// {@endtemplate}
+  EditorSelectionState get selectionState => _selectionState;
+
+  @override
+  List<Object?> get props => [html, _selectionState];
+  @override
+  bool? get stringify => true;
+
+  const HtmlEditorValue._({
+    required this.html,
+    required EditorSelectionState selectionState,
+  }) : _selectionState = selectionState;
+
+  const HtmlEditorValue({this.html = ""}) : _selectionState = const EditorSelectionState();
+
+  const HtmlEditorValue.initial({String? html})
+      : html = html ?? "",
+        _selectionState = const EditorSelectionState();
 
   /// Make a new instance from another [HtmlEditorValue].
-  factory HtmlEditorValue.clone(HtmlEditorValue other) => HtmlEditorValue(
+  factory HtmlEditorValue.clone(HtmlEditorValue other) => HtmlEditorValue._(
         html: other.html,
+        selectionState: other.selectionState,
       );
 
+  @internal
   HtmlEditorValue copyWith({
     String? html,
+    EditorSelectionState? selectionState,
   }) {
-    return HtmlEditorValue(
+    return HtmlEditorValue._(
       html: html ?? this.html,
+      selectionState: selectionState ?? _selectionState,
     );
   }
-
-  @override
-  bool operator ==(covariant HtmlEditorValue other) {
-    if (identical(this, other)) return true;
-
-    return other.html == html;
-  }
-
-  @override
-  int get hashCode => html.hashCode;
 }
