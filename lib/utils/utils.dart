@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'dart:convert';
 import 'dart:math';
 
@@ -922,7 +920,7 @@ class _DropdownButtonState<T> extends State<CustomDropdownButton<T>> with Widget
     }
   }
 
-  TextStyle? get _textStyle => widget.style ?? Theme.of(context).textTheme.subtitle1;
+  TextStyle? get _textStyle => widget.style ?? Theme.of(context).textTheme.titleMedium;
 
   void _handleTap() {
     final textDirection = Directionality.maybeOf(context);
@@ -977,7 +975,7 @@ class _DropdownButtonState<T> extends State<CustomDropdownButton<T>> with Widget
   }
 
   double get _denseButtonHeight {
-    final fontSize = _textStyle!.fontSize ?? Theme.of(context).textTheme.subtitle1!.fontSize!;
+    final fontSize = _textStyle!.fontSize ?? Theme.of(context).textTheme.titleMedium!.fontSize!;
     return max(fontSize, max(widget.iconSize, _kDenseButtonHeight));
   }
 
@@ -1052,10 +1050,7 @@ class _DropdownButtonState<T> extends State<CustomDropdownButton<T>> with Widget
       hintIndex = items.length;
       items.add(DefaultTextStyle(
         style: _textStyle!.copyWith(color: Theme.of(context).hintColor),
-        child: IgnorePointer(
-          ignoringSemantics: false,
-          child: displayedHint,
-        ),
+        child: ExcludeSemantics(child: IgnorePointer(child: displayedHint)),
       ));
     }
 

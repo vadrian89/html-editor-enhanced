@@ -1,5 +1,3 @@
-// ignore_for_file: curly_braces_in_flow_control_structures, deprecated_member_use
-
 import 'dart:convert';
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
@@ -34,8 +32,9 @@ class HtmlEditorController extends unsupported.HtmlEditorController {
         .firstWhere((element) => json.decode(element.data)['type'] == 'toDart: getText');
     String text = json.decode(e.data)['text'];
     if (processOutputHtml &&
-        (text.isEmpty || text == '<p></p>' || text == '<p><br></p>' || text == '<p><br/></p>'))
+        (text.isEmpty || text == '<p></p>' || text == '<p><br></p>' || text == '<p><br/></p>')) {
       text = '';
+    }
     return text;
   }
 
@@ -244,7 +243,7 @@ class HtmlEditorController extends unsupported.HtmlEditorController {
       _evaluateJavascriptWeb(data: {
         'type': 'toIframe: addNotification',
         'html': html,
-        'alertType': 'alert alert-${describeEnum(notificationType)}'
+        'alertType': 'alert alert-${notificationType.name}'
       });
     }
     recalculateHeight();

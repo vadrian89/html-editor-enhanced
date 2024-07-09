@@ -1,10 +1,9 @@
-// ignore_for_file: use_build_context_synchronously, unnecessary_string_escapes, deprecated_member_use, sized_box_for_whitespace
+// ignore_for_file: use_build_context_synchronously, unnecessary_string_escapes
 
 export 'dart:html';
 
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:html_editor_plus/html_editor.dart';
@@ -239,7 +238,7 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
                 window.parent.postMessage(JSON.stringify({"view": "$createdViewId", "type": "toDart: htmlHeight", "height": height}), "*");
               }
               if (data["type"].includes("setInputType")) {
-                document.getElementsByClassName('note-editable')[0].setAttribute('inputmode', '${describeEnum(widget.htmlEditorOptions.inputType)}');
+                document.getElementsByClassName('note-editable')[0].setAttribute('inputmode', '${widget.htmlEditorOptions.inputType.name}');
               }
               if (data["type"].includes("setText")) {
                 \$('#summernote-2').summernote('code', data["text"]);
@@ -528,7 +527,7 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: widget.htmlEditorOptions.autoAdjustHeight ? actualHeight : widget.otherOptions.height,
       child: Column(
         children: <Widget>[
