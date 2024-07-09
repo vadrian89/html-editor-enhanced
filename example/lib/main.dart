@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:html_editor_plus/html_editor.dart';
@@ -7,7 +5,7 @@ import 'package:file_picker/file_picker.dart';
 
 import 'plus/example_scaffold.dart';
 
-void main() => runApp(HtmlEditorExampleApp(showPlusExample: true));
+void main() => runApp(HtmlEditorExampleApp(showPlusExample: false));
 
 class HtmlEditorExampleApp extends StatelessWidget {
   final bool showPlusExample;
@@ -91,13 +89,12 @@ class _HtmlEditorExampleState extends State<HtmlEditorExample> {
                   toolbarPosition: ToolbarPosition.aboveEditor, //by default
                   toolbarType: ToolbarType.nativeScrollable, //by default
                   onButtonPressed: (ButtonType type, bool? status, Function? updateStatus) {
-                    print(
-                        "button '${describeEnum(type)}' pressed, the current selected status is $status");
+                    print("button '${type.name}' pressed, the current selected status is $status");
                     return true;
                   },
                   onDropdownChanged:
                       (DropdownType type, dynamic changed, Function(dynamic)? updateSelectedItem) {
-                    print("dropdown '${describeEnum(type)}' changed to $changed");
+                    print("dropdown '${type.name}' changed to $changed");
                     return true;
                   },
                   mediaLinkInsertInterceptor: (String url, InsertFileType type) {
@@ -145,7 +142,7 @@ class _HtmlEditorExampleState extends State<HtmlEditorExample> {
                     print(file.base64);
                   },*/
                     onImageUploadError: (FileUpload? file, String? base64Str, UploadError error) {
-                  print(describeEnum(error));
+                  print(error.name);
                   print(base64Str ?? '');
                   if (file != null) {
                     print(file.name);

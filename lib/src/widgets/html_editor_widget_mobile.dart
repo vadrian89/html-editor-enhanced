@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously, deprecated_member_use, unnecessary_string_escapes, prefer_interpolation_to_compose_strings
+// ignore_for_file: use_build_context_synchronously, unnecessary_string_escapes, prefer_interpolation_to_compose_strings
 
 import 'dart:async';
 import 'dart:collection';
@@ -436,7 +436,7 @@ class _HtmlEditorWidgetMobileState extends State<HtmlEditorWidget> {
                               "document.onselectionchange = onSelectionChange; console.log('done');");
                       await controller.evaluateJavascript(
                           source:
-                              "document.getElementsByClassName('note-editable')[0].setAttribute('inputmode', '${describeEnum(widget.htmlEditorOptions.inputType)}');");
+                              "document.getElementsByClassName('note-editable')[0].setAttribute('inputmode', '${widget.htmlEditorOptions.inputType.name}');");
                       if ((Theme.of(context).brightness == Brightness.dark ||
                               widget.htmlEditorOptions.darkMode == true) &&
                           widget.htmlEditorOptions.darkMode != false) {

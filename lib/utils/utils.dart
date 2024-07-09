@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'dart:convert';
 import 'dart:math';
 
@@ -1052,10 +1050,7 @@ class _DropdownButtonState<T> extends State<CustomDropdownButton<T>> with Widget
       hintIndex = items.length;
       items.add(DefaultTextStyle(
         style: _textStyle!.copyWith(color: Theme.of(context).hintColor),
-        child: IgnorePointer(
-          ignoringSemantics: false,
-          child: displayedHint,
-        ),
+        child: ExcludeSemantics(child: IgnorePointer(child: displayedHint)),
       ));
     }
 

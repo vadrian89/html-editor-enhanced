@@ -11,8 +11,8 @@ environment:
 
 dependencies:
   equatable: ^2.0.5
-  file_picker: ^8.0.3
-  flex_color_picker: ^3.5.0
+  file_picker: ^8.0.6
+  flex_color_picker: ^3.5.1
   flutter:
     sdk: flutter
   flutter_inappwebview: ^6.0.0
@@ -23,7 +23,6 @@ dependencies:
   visibility_detector: ^0.4.0+2
 
 dev_dependencies:
-  # plugin to help maintain effective Flutter standards
   flutter_lints: ^4.0.0
   flutter_test:
     sdk: flutter

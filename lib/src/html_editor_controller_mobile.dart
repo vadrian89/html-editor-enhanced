@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -191,7 +189,7 @@ class HtmlEditorController extends unsupported.HtmlEditorController {
   void addNotification(String html, NotificationType notificationType) async {
     await _evaluateJavascript(source: """
         \$('.note-status-output').html(
-          '<div class="alert alert-${describeEnum(notificationType)}">$html</div>'
+          '<div class="alert alert-${notificationType.name}">$html</div>'
         );
         """);
     recalculateHeight();

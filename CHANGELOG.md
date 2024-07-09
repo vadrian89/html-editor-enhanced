@@ -1,3 +1,7 @@
+## [0.0.5] = 2024-07-09
+* Updated dependencies for Flutter 3.22.x
+* Fixed issues after dependencies update
+* Updated example gradle requirements
 ## [0.0.4] = 2024-03-09
 * Added onChange callback.
 * Fixed issue with Summernote icons not loading.
